@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>karina0411 • Instagram</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --card-bg: #121212;
+      --border: #262626;
+      --text: #f5f5f5;
+      --subtext: #a8a8a8;
+      --blue: #0095f6;
+      --like: #ff3040;
+      --highlight-ring: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      user-select: none;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      background: #000;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 440px;
+      height: 100vh;
+      background: #000;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-left: 1px solid #1a1a1a;
+      border-right: 1px solid #1a1a1a;
+    }
+    /* 頂部狀態列與頂部導覽列 */
+    header.ig-header {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 10;
+      background: #000;
+    }
+    .logo-font {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .header-icons {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+    .svg-btn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    /* 主內容區域 */
+    main.main-viewport {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-bottom: 50px;
+      position: relative;
+    }
+    .page-view {
+      display: none;
+    }
+    .page-view.active {
+      display: block;
+    }
+    /* 限時動態區 (Home) */
+    .story-rail {
+      display: flex;
+      gap: 14px;
+      padding: 12px 14px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .story-rail::-webkit-scrollbar { display: none; }
+    .story-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 11px;
+      gap: 5px;
+      color: var(--subtext);
+    }
+    .story-ring {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      padding: 2.5px;
+      background: var(--highlight-ring);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .story-ring img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #000;
+    }
+    /* 貼文卡片 (Feed) */
+    .feed-card {
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .feed-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .avatar-sm {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .feed-media {
+      width: 100%;
+      max-height: 540px;
+      background: #111;
+      overflow: hidden;
+    }
+    .feed-media img, .feed-media video {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+    .feed-actions {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 14px 6px;
+    }
+    .actions-left {
+      display: flex;
+      gap: 16px;
+    }
+    .feed-meta {
+      padding: 0 14px 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .feed-meta .likes {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .feed-meta .caption span {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    /* Profile 個人主頁排版 */
+    .profile-header {
+      padding: 16px 16px 8px;
+    }
+    .profile-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .profile-avatar-wrap {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .profile-avatar-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .profile-counts {
+      display: flex;
+      flex: 1;
+      justify-content: space-around;
+      text-align: center;
+    }
+    .count-item .num {
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .count-item .label {
+      font-size: 12px;
+      color: var(--subtext);
+    }
+    .profile-bio {
+      font-size: 13px;
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+    .profile-bio .name {
+      font-weight: 700;
+    }
+    .profile-buttons {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .btn-ig {
+      flex: 1;
+      background: #262626;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .profile-tabs {
+      display: flex;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .profile-tab {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 10px 0;
+      cursor: pointer;
+      opacity: 0.4;
+    }
+    .profile-tab.active {
+      opacity: 1;
+      border-bottom: 1px solid #fff;
+    }
+    /* 九宮格 (Grid) */
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+    .grid-item {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      background: #111;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .grid-item img, .grid-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .pin-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 16px;
+      height: 16px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Reels 全螢幕視圖 */
+    .reels-container {
+      height: calc(100vh - 98px);
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+    }
+    .reel-snap {
+      position: relative;
+      height: 100%;
+      scroll-snap-align: start;
+      background: #000;
+    }
+    .reel-snap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .reel-overlay {
+      position: absolute;
+      right: 12px;
+      bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+    }
+    .reel-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 11px;
+      gap: 4px;
+    }
+    .reel-text {
+      position: absolute;
+      left: 14px;
+      bottom: 20px;
+      font-size: 13px;
+    }
+    /* 底部 TabBar */
+    nav.bottom-nav {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 48px;
+      background: #000;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 20;
+    }
+    .nav-icon {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .nav-avatar {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid transparent;
+    }
+    .nav-avatar.active {
+      border-color: #fff;
+    }
+    /* 發布貼文 Modal */
+    .modal {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal.active { display: flex; }
+    .modal-box {
+      width: 100%;
+      background: #262626;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-title {
+      padding: 12px;
+      text-align: center;
+      font-weight: 600;
+      border-bottom: 1px solid #363636;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- 頂部 Header -->
+    <header class="ig-header">
+      <div id="header-brand" class="logo-font">Instagram</div>
+      <div class="header-icons">
+        <!-- 愛心/通知按鈕 -->
+        <div class="svg-btn" onclick="alert('目前沒有新通知')">
+          <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <!-- 訊息小盒子按鈕 -->
+        <div class="svg-btn" onclick="switchView('view-messages')">
+          <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主視圖區域 -->
+    <main class="main-viewport">
+      
+      <!-- 1. 首頁 (Home Feed) -->
+      <section id="view-feed" class="page-view">
+        <div class="story-rail">
+          <div class="story-item">
+            <div class="story-ring"><img src="assets/avatar_snow.png" alt="Karina" /></div>
+            <span>你的限時動態</span>
+          </div>
+          <div class="story-item">
+            <div class="story-ring"><img src="assets/post3_redcloak.png" alt="Winter" /></div>
+            <span>winter_01</span>
+          </div>
+          <div class="story-item">
+            <div class="story-ring"><img src="assets/post4_sea.png" alt="aespa" /></div>
+            <span>aespa_official</span>
+          </div>
+        </div>
+
+        <!-- 貼文卡片 1 -->
+        <article class="feed-card">
+          <div class="feed-header">
+            <div class="user-info">
+              <img class="avatar-sm" src="assets/avatar_snow.png" />
+              <span>karina0411</span>
+            </div>
+            <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+          </div>
+          <div class="feed-media">
+            <img src="assets/post1_stage.png" alt="Karina Stage" />
+          </div>
+          <div class="feed-actions">
+            <div class="actions-left">
+              <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+            <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="feed-meta">
+            <div class="likes">45.7 萬個讚</div>
+            <div class="caption"><span>karina0411</span>SYNK : PARALLEL LINE 💙</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- 2. 探索頁面 (Explore Grid) -->
+      <section id="view-explore" class="page-view">
+        <div style="padding: 10px 14px;">
+          <input type="text" placeholder="搜尋" style="width: 100%; background: #262626; border: none; border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 14px; outline: none;" />
+        </div>
+        <div class="post-grid">
+          <div class="grid-item"><img src="assets/post2_night.png" /></div>
+          <div class="grid-item"><img src="assets/post3_redcloak.png" /></div>
+          <div class="grid-item"><img src="assets/post4_sea.png" /></div>
+          <div class="grid-item"><img src="assets/post5_glasses.png" /></div>
+          <div class="grid-item"><img src="assets/post6_antenna.png" /></div>
+          <div class="grid-item"><img src="assets/post1_stage.png" /></div>
+        </div>
+      </section>
+
+      <!-- 3. 連續短片 (Reels) -->
+      <section id="view-reels" class="page-view">
+        <div class="reels-container">
+          <div class="reel-snap">
+            <video src="assets/reel_dance.mp4" autoplay loop muted playsinline></video>
+            <div class="reel-overlay">
+              <div class="reel-action">
+                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span>33.1萬</span>
+              </div>
+              <div class="reel-action">
+                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span>1,208</span>
+              </div>
+            </div>
+            <div class="reel-text">
+              <b>karina0411</b> • 原聲
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 個人主頁 (Profile - karina0411) -->
+      <section id="view-profile" class="page-view active">
+        <div class="profile-header">
+          <div class="profile-top">
+            <div class="profile-avatar-wrap">
+              <!-- 大頭貼：藍色圍巾雪地照 -->
+              <img src="assets/avatar_snow.png" alt="karina0411 avatar" />
+            </div>
+            <div class="profile-counts">
+              <div class="count-item"><div class="num">36</div><div class="label">貼文</div></div>
+              <div class="count-item"><div class="num">2,480萬</div><div class="label">粉絲</div></div>
+              <div class="count-item"><div class="num">4</div><div class="label">追蹤中</div></div>
+            </div>
+          </div>
+          <div class="profile-bio">
+            <div class="name">KARINA (劉知珉)</div>
+            <div>May the TENDERNESS be with you! 💙</div>
+            <div>@aespa_official</div>
+          </div>
+          <div class="profile-buttons">
+            <button class="btn-ig">編輯個人檔案</button>
+            <button class="btn-ig">分享個人檔案</button>
+          </div>
+        </div>
+
+        <!-- 貼文分頁籤 -->
+        <div class="profile-tabs">
+          <div class="profile-tab active">
+            <svg width="22" height="22" fill="#fff" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <div class="profile-tab">
+            <svg width="22" height="22" fill="#fff" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+          <div class="profile-tab">
+            <svg width="22" height="22" fill="#fff" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+        </div>
+
+        <!-- Karina 專屬九宮格 -->
+        <div class="post-grid" id="profileGrid">
+          <div class="grid-item"><span class="pin-badge">📌</span><img src="assets/post1_stage.png" /></div>
+          <div class="grid-item"><span class="pin-badge">📌</span><img src="assets/post2_night.png" /></div>
+          <div class="grid-item"><span class="pin-badge">📌</span><img src="assets/post3_redcloak.png" /></div>
+          <div class="grid-item"><img src="assets/post4_sea.png" /></div>
+          <div class="grid-item"><img src="assets/post5_glasses.png" /></div>
+          <div class="grid-item"><img src="assets/post6_antenna.png" /></div>
+        </div>
+      </section>
+
+      <!-- 5. 訊息抽屜 (Direct) -->
+      <section id="view-messages" class="page-view">
+        <div style="padding: 14px; font-weight: 700; font-size: 18px;">主要訊息</div>
+        <div style="padding: 10px 14px; display: flex; align-items: center; gap: 12px;">
+          <img src="assets/post3_redcloak.png" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" />
+          <div>
+            <div style="font-weight: 600; font-size: 14px;">winter_01</div>
+            <div style="color: var(--subtext); font-size: 12px;">歐姊，練習室見！ • 2小時</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 發布貼文彈出視窗 -->
+    <div id="createModal" class="modal">
+      <div class="modal-box">
+        <div class="modal-title">
+          <span onclick="toggleCreateModal(false)" style="color: var(--subtext); cursor:pointer;">取消</span>
+          <span>建立新貼文</span>
+          <span onclick="publishPost()" style="color: var(--blue); cursor:pointer; font-weight:700;">發布</span>
+        </div>
+        <div style="padding: 14px;">
+          <input type="file" id="postFileInput" accept="image/*" style="margin-bottom: 10px; color: #fff;" />
+          <textarea id="postCaption" rows="3" placeholder="撰寫說明文字..." style="width: 100%; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 8px; color: #fff; outline: none;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部 Tab 導覽列 -->
+    <nav class="bottom-nav">
+      <div class="nav-icon" onclick="switchView('view-feed')">
+        <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </div>
+      <div class="nav-icon" onclick="switchView('view-explore')">
+        <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div class="nav-icon" onclick="toggleCreateModal(true)">
+        <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" ry="5"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      </div>
+      <div class="nav-icon" onclick="switchView('view-reels')">
+        <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      </div>
+      <div class="nav-icon" onclick="switchView('view-profile')">
+        <img class="nav-avatar active" src="assets/avatar_snow.png" alt="Profile" />
+      </div>
+    </nav>
+
+  </div>
+
+  <script>
+    // 切換分頁邏輯
+    function switchView(viewId) {
+      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(viewId);
+      if (target) target.classList.add('active');
+
+      const brand = document.getElementById('header-brand');
+      if (viewId === 'view-profile') {
+        brand.innerText = 'karina0411';
+      } else if (viewId === 'view-messages') {
+        brand.innerText = '收件匣';
+      } else {
+        brand.innerText = 'Instagram';
+      }
+    }
+
+    // 發布視窗切換
+    function toggleCreateModal(show) {
+      document.getElementById('createModal').classList.toggle('active', show);
+    }
+
+    // 動態發布貼文
+    function publishPost() {
+      const fileInput = document.getElementById('postFileInput');
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const grid = document.getElementById('profileGrid');
+          const newItem = document.createElement('div');
+          newItem.className = 'grid-item';
+          newItem.innerHTML = `<img src="${e.target.result}" />`;
+          grid.prepend(newItem);
+          toggleCreateModal(false);
+          switchView('view-profile');
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      } else {
+        alert('請先選擇要上傳的照片！');
+      }
+    }
+  </script>
+</body>
+</html>
