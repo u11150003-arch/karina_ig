@@ -7,12 +7,11 @@
   <style>
     :root {
       --bg: #000000;
-      --card-bg: #121212;
+      --card: #121212;
       --border: #262626;
       --text: #f5f5f5;
       --subtext: #a8a8a8;
       --blue: #0095f6;
-      --like: #ff3040;
       --ring: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
     }
     * {
@@ -23,39 +22,40 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
       user-select: none;
     }
-    html, body {
+    body {
       background-color: #000;
       color: var(--text);
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
     }
     .app-wrapper {
+      width: 100%;
       max-width: 440px;
-      margin: 0 auto;
-      height: 100vh;
-      height: 100dvh;
+      min-height: 100vh;
+      background: #000;
       display: flex;
       flex-direction: column;
       position: relative;
-      background: #000;
     }
     
-    /* 頂部 Header */
+    /* 頂部 Header (Sticky 固定) */
     header.ig-top-bar {
-      height: 48px;
+      position: sticky;
+      top: 0;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       background: #000;
-      z-index: 30;
-      flex-shrink: 0;
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+      z-index: 40;
     }
     .logo-area {
       font-size: 20px;
       font-weight: 700;
+      letter-spacing: -0.4px;
       display: flex;
       align-items: center;
       gap: 5px;
@@ -70,13 +70,10 @@
       align-items: center;
     }
 
-    /* 主捲動區 */
+    /* 主內容區：允許頁面原生順暢滑動 */
     main.viewport {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding-bottom: 70px;
-      -webkit-overflow-scrolling: touch;
+      width: 100%;
+      padding-bottom: 90px; /* 保留給底部導覽列的高度 */
     }
     .page { display: none; }
     .page.active { display: block; }
@@ -87,7 +84,7 @@
       gap: 14px;
       padding: 12px 14px;
       overflow-x: auto;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 0.5px solid var(--border);
     }
     .stories-tray::-webkit-scrollbar { display: none; }
     .story-node {
@@ -117,10 +114,10 @@
       border: 2px solid #000;
     }
 
-    /* 貼文 Feed */
+    /* 首頁貼文 (Feed) */
     .feed-item {
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      margin-bottom: 12px;
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      margin-bottom: 16px;
     }
     .feed-user {
       display: flex;
@@ -143,7 +140,6 @@
     }
     .feed-photo-container {
       width: 100%;
-      max-height: 520px;
       background: #111;
       overflow: hidden;
     }
@@ -176,19 +172,19 @@
       margin-right: 6px;
     }
 
-    /* 個人主頁 */
+    /* 個人主頁 Profile */
     .profile-info {
-      padding: 16px;
+      padding: 14px 16px 8px;
     }
     .profile-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .profile-avatar-circle {
-      width: 80px;
-      height: 80px;
+      width: 78px;
+      height: 78px;
       border-radius: 50%;
       overflow: hidden;
       border: 1px solid var(--border);
@@ -209,14 +205,38 @@
     .stat-box .desc { font-size: 12px; color: var(--subtext); }
     .profile-desc {
       font-size: 13px;
-      line-height: 1.4;
-      margin-bottom: 14px;
+      line-height: 1.45;
+      margin-bottom: 12px;
     }
-    .profile-desc .realname { font-weight: 700; }
+    .profile-desc .realname { font-weight: 700; margin-bottom: 2px; }
+
+    /* 音樂膠囊按鈕 (點擊播放/暫停音樂) */
+    .music-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1a1a1a;
+      border: 0.5px solid #333;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #fff;
+      cursor: pointer;
+      margin-bottom: 14px;
+      width: 100%;
+    }
+    .music-pill-btn:active { background: #262626; }
+    .music-pill-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
     .profile-actions {
       display: flex;
       gap: 6px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .profile-btn {
       flex: 1;
@@ -230,8 +250,8 @@
     }
     .grid-tabs {
       display: flex;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      border-top: 0.5px solid var(--border);
+      border-bottom: 0.5px solid var(--border);
     }
     .grid-tab {
       flex: 1;
@@ -242,7 +262,7 @@
     }
     .grid-tab.active { opacity: 1; border-bottom: 1px solid #fff; }
 
-    /* 九宮格照片排版 */
+    /* 九宮格排版 */
     .photo-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -260,17 +280,19 @@
       height: 100%;
       object-fit: cover;
     }
-    .pin-tag {
+
+    /* 真實 IG 置頂圖標（白色大頭針 SVG，無紅色背景） */
+    .ig-pin-icon {
       position: absolute;
       top: 6px;
       right: 6px;
-      font-size: 10px;
-      background: rgba(0,0,0,0.6);
-      padding: 2px 4px;
-      border-radius: 4px;
+      width: 16px;
+      height: 16px;
+      filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.85));
+      pointer-events: none;
     }
 
-    /* 底部導覽列 (常駐且不被遮擋) */
+    /* 底部導覽列 (完全修復超線問題) */
     nav.fixed-bottom-bar {
       position: fixed;
       bottom: 0;
@@ -278,14 +300,15 @@
       transform: translateX(-50%);
       width: 100%;
       max-width: 440px;
-      height: 52px;
+      height: 48px;
       background: #000;
-      border-top: 1px solid var(--border);
+      border-top: 0.5px solid #262626;
       display: flex;
       justify-content: space-around;
       align-items: center;
-      z-index: 50;
+      z-index: 60;
       padding-bottom: env(safe-area-inset-bottom);
+      box-sizing: content-box;
     }
     .nav-btn {
       cursor: pointer;
@@ -296,21 +319,21 @@
       height: 100%;
     }
     .nav-user-avatar {
-      width: 26px;
-      height: 26px;
+      width: 25px;
+      height: 25px;
       border-radius: 50%;
       object-fit: cover;
       border: 1.5px solid transparent;
     }
     .nav-user-avatar.active { border-color: #fff; }
 
-    /* 訊息收件匣與便利貼 */
+    /* 訊息收件匣 */
     .dm-notes-tray {
       display: flex;
       gap: 14px;
       padding: 14px;
       overflow-x: auto;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
     }
     .note-avatar-wrapper {
       position: relative;
@@ -366,7 +389,7 @@
       display: flex;
       align-items: center;
       padding: 0 14px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 0.5px solid var(--border);
       gap: 12px;
     }
     .chat-body {
@@ -400,7 +423,7 @@
       display: flex;
       padding: 10px 14px;
       background: #000;
-      border-top: 1px solid var(--border);
+      border-top: 0.5px solid var(--border);
       gap: 8px;
       padding-bottom: max(10px, env(safe-area-inset-bottom));
     }
@@ -423,7 +446,7 @@
       cursor: pointer;
     }
 
-    /* 抽屜／Modal (通知、追蹤、貼文詳細、限動) */
+    /* 抽屜／Modal */
     .sheet-modal {
       display: none;
       position: fixed;
@@ -449,7 +472,7 @@
       padding: 14px;
       text-align: center;
       font-weight: 600;
-      border-bottom: 1px solid #282828;
+      border-bottom: 0.5px solid #282828;
       position: relative;
     }
     .sheet-close-btn {
@@ -460,7 +483,7 @@
       cursor: pointer;
     }
 
-    /* 貼文放大 Modal */
+    /* 貼文放大視窗 */
     #postDetailModal {
       display: none;
       position: fixed;
@@ -476,12 +499,12 @@
       width: 100%;
       max-width: 400px;
       background: #000;
-      border: 1px solid var(--border);
+      border: 0.5px solid var(--border);
       border-radius: 10px;
       overflow: hidden;
     }
 
-    /* 限時動態播放器 */
+    /* 限時動態播放器 (左右點擊切換) */
     #storyPlayer {
       display: none;
       position: fixed;
@@ -494,30 +517,45 @@
     }
     #storyPlayer.active { display: flex; }
     .story-progress-line {
-      width: 100%;
+      display: flex;
+      gap: 4px;
+      padding: 8px 10px 0;
+      z-index: 220;
+    }
+    .story-track {
+      flex: 1;
       height: 2.5px;
       background: rgba(255,255,255,0.3);
-      position: relative;
+      border-radius: 2px;
+      overflow: hidden;
     }
-    .story-progress-bar {
+    .story-bar {
       height: 100%;
       width: 0%;
       background: #fff;
     }
     .story-header-user {
       position: absolute;
-      top: 16px;
+      top: 20px;
       left: 14px;
       right: 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      z-index: 220;
+    }
+    .story-tap-zone {
+      position: absolute;
+      inset: 0;
+      display: flex;
       z-index: 210;
     }
+    .story-tap-left { width: 35%; height: 100%; }
+    .story-tap-right { width: 65%; height: 100%; }
 
     /* 連續短片視圖 */
     .reels-scroll-area {
-      height: calc(100vh - 120px);
+      height: calc(100vh - 48px);
       scroll-snap-type: y mandatory;
       overflow-y: scroll;
     }
@@ -546,6 +584,9 @@
 <body>
   <div class="app-wrapper">
 
+    <!-- 背景音樂音訊元素 (來自 KARINA PLAYLIST) -->
+    <audio id="bgAudio" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-PLAYLIST/main/May%20the%20TENDERNESS%20be%20with%20you.mp3" preload="auto"></audio>
+
     <!-- 頂部 Header -->
     <header class="ig-top-bar">
       <div id="topLogo" class="logo-area">
@@ -553,28 +594,27 @@
         <svg class="verified-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
       </div>
       <div class="top-bar-icons">
-        <!-- 愛心 (開啟真實通知頁面，非彈窗) -->
-        <div onclick="openNotificationSheet()">
+        <div onclick="openNotificationSheet()" style="cursor:pointer;">
           <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </div>
       </div>
     </header>
 
-    <!-- 主視圖 Viewport -->
+    <!-- 主滑動視圖 -->
     <main class="viewport">
 
-      <!-- 1. 首頁 (多篇貼文與限時動態) -->
+      <!-- 1. 首頁 (多篇貼文可無限向下順暢滑動) -->
       <section id="pageFeed" class="page">
         <div class="stories-tray">
-          <div class="story-node" onclick="playStory('IMG_4810.jpeg', '你的限時動態')">
+          <div class="story-node" onclick="startStoryGroup(0)">
             <div class="story-border"><img src="IMG_4810.jpeg" alt="Story" /></div>
             <span>你的限時動態</span>
           </div>
-          <div class="story-node" onclick="playStory('IMG_5039.png', 'aespa_official')">
+          <div class="story-node" onclick="startStoryGroup(1)">
             <div class="story-border"><img src="IMG_5039.png" alt="Story" /></div>
             <span>aespa_official</span>
           </div>
-          <div class="story-node" onclick="playStory('IMG_1156.jpeg', 'imwinter')">
+          <div class="story-node" onclick="startStoryGroup(2)">
             <div class="story-border"><img src="IMG_1156.jpeg" alt="Story" /></div>
             <span>imwinter</span>
           </div>
@@ -623,7 +663,7 @@
               <span id="heart2" onclick="toggleFeedHeart('heart2', 'likeCnt2', 382000)">
                 <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
               </span>
-              <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
               <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </div>
             <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
@@ -649,7 +689,7 @@
               <span id="heart3" onclick="toggleFeedHeart('heart3', 'likeCnt3', 521000)">
                 <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
               </span>
-              <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
               <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </div>
             <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
@@ -659,7 +699,7 @@
         </article>
       </section>
 
-      <!-- 2. 連續短片 Reels (修正影片 autoplay 與 playsinline) -->
+      <!-- 2. 連續短片 Reels -->
       <section id="pageReels" class="page">
         <div class="reels-scroll-area">
           <div class="reel-block">
@@ -674,9 +714,8 @@
         </div>
       </section>
 
-      <!-- 3. 訊息頁面 (置中主選單：可點入對話聊天) -->
+      <!-- 3. 訊息 Direct (最中間) -->
       <section id="pageMessages" class="page">
-        <!-- 頂部便利貼欄 -->
         <div class="dm-notes-tray">
           <div class="note-avatar-wrapper">
             <div class="note-bubble">寫筆記...</div>
@@ -692,7 +731,6 @@
 
         <div style="padding: 12px 14px; font-weight:700; font-size:16px;">訊息</div>
 
-        <!-- 聊天室列表 (點擊進入聊天) -->
         <div class="dm-cell" onclick="openChat('winter_01', 'IMG_1156.jpeg', '歐姊，練習室見！')">
           <img class="dm-avatar" src="IMG_1156.jpeg" />
           <div class="dm-details">
@@ -733,7 +771,7 @@
         </div>
       </section>
 
-      <!-- 5. 個人主頁 Profile (預設畫面) -->
+      <!-- 5. 個人主頁 Profile (預設開啟) -->
       <section id="pageProfile" class="page active">
         <div class="profile-info">
           <div class="profile-row">
@@ -744,7 +782,6 @@
             <div class="profile-stats-group">
               <div class="stat-box"><div class="count">36</div><div class="desc">貼文</div></div>
               <div class="stat-box"><div class="count">2,480萬</div><div class="desc">粉絲</div></div>
-              <!-- 點擊查看截圖中的 4 位追蹤者 -->
               <div class="stat-box" onclick="openFollowingSheet()"><div class="count">4</div><div class="desc">追蹤中</div></div>
             </div>
           </div>
@@ -753,6 +790,15 @@
             <div>May the TENDERNESS be with you! 💙</div>
             <div>@aespa_official</div>
           </div>
+
+          <!-- 音樂膠囊按鈕：點擊真正播放/暫停 KARINA PLAYLIST 音樂 -->
+          <div class="music-pill-btn" onclick="togglePlayMusic()">
+            <span id="musicPlayIcon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </span>
+            <span class="music-pill-text">May the TENDERNESS be with you! (feat. KARI...</span>
+          </div>
+
           <div class="profile-actions">
             <button class="profile-btn">編輯個人檔案</button>
             <button class="profile-btn">分享個人檔案</button>
@@ -768,18 +814,27 @@
           </div>
         </div>
 
-        <!-- 九宮格：每一張皆可點擊放大 -->
+        <!-- 九宮格：真實 IG 白色傾斜大頭針 置頂標籤 -->
         <div class="photo-grid">
+          <!-- 置頂 1 -->
           <div class="grid-cell" onclick="openPostModal('%E4%BF%AEkarina%20(328).jpeg', '나의 온 세상이 너라는 파랑으로 물든 날 💙', '45.7 萬')">
-            <span class="pin-tag">📌</span>
+            <svg class="ig-pin-icon" viewBox="0 0 24 24" fill="#fff">
+              <path d="M16 2l-4 4 2 2-5 5H6l-3 3 1.5 1.5L8 14.5v-3l5-5 2 2 4-4-3-3z"/>
+            </svg>
             <img src="%E4%BF%AEkarina%20(328).jpeg" />
           </div>
+          <!-- 置頂 2 -->
           <div class="grid-cell" onclick="openPostModal('IMG_2050.jpeg', 'Tokyo night walk 🌃', '38.2 萬')">
-            <span class="pin-tag">📌</span>
+            <svg class="ig-pin-icon" viewBox="0 0 24 24" fill="#fff">
+              <path d="M16 2l-4 4 2 2-5 5H6l-3 3 1.5 1.5L8 14.5v-3l5-5 2 2 4-4-3-3z"/>
+            </svg>
             <img src="IMG_2050.jpeg" />
           </div>
+          <!-- 置頂 3 -->
           <div class="grid-cell" onclick="openPostModal('%E2%9C%85%E4%BF%AE7N9A0205.jpeg', '👾🛸💚', '51.3 萬')">
-            <span class="pin-tag">📌</span>
+            <svg class="ig-pin-icon" viewBox="0 0 24 24" fill="#fff">
+              <path d="M16 2l-4 4 2 2-5 5H6l-3 3 1.5 1.5L8 14.5v-3l5-5 2 2 4-4-3-3z"/>
+            </svg>
             <img src="%E2%9C%85%E4%BF%AE7N9A0205.jpeg" />
           </div>
           <div class="grid-cell" onclick="openPostModal('IMG_6344.jpeg', '바다 🌊', '49.8 萬')"><img src="IMG_6344.jpeg" /></div>
@@ -793,23 +848,23 @@
 
     </main>
 
-    <!-- 底部固定導覽列 (五大圖示，最中間為訊息小飛機) -->
+    <!-- 底部常駐導覽列 (徹底修正超線問題) -->
     <nav class="fixed-bottom-bar">
       <!-- 1. 首頁 -->
       <div class="nav-btn" onclick="navTo('pageFeed')">
-        <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <svg width="22" height="22" fill="#fff" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
       </div>
       <!-- 2. 連續短片 Reels -->
       <div class="nav-btn" onclick="navTo('pageReels')">
-        <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
       </div>
       <!-- 3. 最中間：訊息小飛機 -->
       <div class="nav-btn" onclick="navTo('pageMessages')">
-        <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </div>
       <!-- 4. 探索 -->
       <div class="nav-btn" onclick="navTo('pageExplore')">
-        <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
       <!-- 5. 個人主頁 -->
       <div class="nav-btn" onclick="navTo('pageProfile')">
@@ -817,7 +872,7 @@
       </div>
     </nav>
 
-    <!-- 抽屜 1：4 個官方認證追蹤者名單 -->
+    <!-- 追蹤者名單抽屜 -->
     <div id="followingSheet" class="sheet-modal">
       <div class="sheet-content">
         <div class="sheet-header">
@@ -825,7 +880,7 @@
           <span class="sheet-close-btn" onclick="closeSheet('followingSheet')">✕</span>
         </div>
         <div style="padding: 12px 16px;">
-          <!-- Member 1 -->
+          <!-- 1. Winter -->
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
             <div style="display:flex; align-items:center; gap:12px;">
               <img src="IMG_1156.jpeg" style="width:46px; height:46px; border-radius:50%; object-fit:cover;" />
@@ -838,7 +893,7 @@
             </div>
             <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
           </div>
-          <!-- Member 2 -->
+          <!-- 2. Karina -->
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
             <div style="display:flex; align-items:center; gap:12px;">
               <img src="IMG_4810.jpeg" style="width:46px; height:46px; border-radius:50%; object-fit:cover;" />
@@ -851,7 +906,7 @@
             </div>
             <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
           </div>
-          <!-- Member 3 -->
+          <!-- 3. Giselle -->
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
             <div style="display:flex; align-items:center; gap:12px;">
               <img src="IMG_6344.jpeg" style="width:46px; height:46px; border-radius:50%; object-fit:cover;" />
@@ -864,7 +919,7 @@
             </div>
             <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
           </div>
-          <!-- Member 4 -->
+          <!-- 4. NingNing -->
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:12px;">
               <img src="IMG_2802.jpeg" style="width:46px; height:46px; border-radius:50%; object-fit:cover;" />
@@ -881,7 +936,7 @@
       </div>
     </div>
 
-    <!-- 抽屜 2：真實 Instagram 通知清單 -->
+    <!-- 通知清單抽屜 -->
     <div id="notificationSheet" class="sheet-modal">
       <div class="sheet-content">
         <div class="sheet-header">
@@ -914,7 +969,7 @@
       </div>
     </div>
 
-    <!-- 對話視窗聊天室 (即時打字與自動回覆) -->
+    <!-- 聊天室視窗 -->
     <div id="chatRoom">
       <div class="chat-top">
         <span onclick="closeChat()" style="font-size:20px; cursor:pointer;">←</span>
@@ -928,7 +983,7 @@
       </div>
     </div>
 
-    <!-- 貼文放大詳細 Modal -->
+    <!-- 貼文詳細 Modal -->
     <div id="postDetailModal" onclick="if(event.target===this) closePostModal()">
       <div class="post-modal-box">
         <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px;">
@@ -950,11 +1005,9 @@
       </div>
     </div>
 
-    <!-- 限時動態播放器 -->
+    <!-- 限時動態播放器 (點擊螢幕左/右切換上一篇/下一篇) -->
     <div id="storyPlayer">
-      <div class="story-progress-line">
-        <div id="storyProgressBar" class="story-progress-bar"></div>
-      </div>
+      <div class="story-progress-line" id="storyProgressLine"></div>
       <div class="story-header-user">
         <div style="display:flex; align-items:center; gap:8px;">
           <img id="storyUserAvatar" style="width:30px;height:30px;border-radius:50%;object-fit:cover;" />
@@ -962,18 +1015,27 @@
         </div>
         <span onclick="closeStory()" style="font-size:20px;cursor:pointer;">✕</span>
       </div>
-      <div style="flex:1; display:flex; align-items:center; justify-content:center; background:#111;">
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; background:#111; position:relative;">
         <img id="storyMediaImg" style="width:100%; max-height:85vh; object-fit:contain;" />
+        <!-- 點擊熱區 -->
+        <div class="story-tap-zone">
+          <div class="story-tap-left" onclick="prevStory()"></div>
+          <div class="story-tap-right" onclick="nextStory()"></div>
+        </div>
       </div>
     </div>
 
   </div>
 
   <script>
-    // 分頁切換
+    // 導覽切換 (切換分頁時平滑滾動至頂部)
     function navTo(pageId) {
       document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
+      const target = document.getElementById(pageId);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
 
       const logo = document.getElementById('topLogo');
       if (pageId === 'pageProfile') {
@@ -982,6 +1044,22 @@
         logo.innerHTML = `<span>收件匣</span>`;
       } else {
         logo.innerHTML = `<span>Instagram</span>`;
+      }
+    }
+
+    // 音樂播放 / 暫停控制
+    const bgAudio = document.getElementById('bgAudio');
+    const playIcon = document.getElementById('musicPlayIcon');
+    function togglePlayMusic() {
+      if (bgAudio.paused) {
+        bgAudio.play().then(() => {
+          playIcon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+        }).catch(err => {
+          console.log('音樂播放被瀏覽器阻擋，需再點擊一次', err);
+        });
+      } else {
+        bgAudio.pause();
+        playIcon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
       }
     }
 
@@ -1029,27 +1107,97 @@
       heart.setAttribute('stroke', isModalLiked ? '#ff3040' : '#fff');
     }
 
-    // 限時動態播放計時器
-    let storyTimer = null;
-    function playStory(imgSrc, name) {
-      document.getElementById('storyMediaImg').src = imgSrc;
-      document.getElementById('storyUserAvatar').src = imgSrc;
-      document.getElementById('storyUserName').innerText = name;
-      document.getElementById('storyPlayer').classList.add('active');
+    // 限時動態多篇連續播放與左右點擊切換
+    const storyGroups = [
+      {
+        user: '你的限時動態',
+        avatar: 'IMG_4810.jpeg',
+        stories: ['IMG_4810.jpeg', 'IMG_6993.jpeg']
+      },
+      {
+        user: 'aespa_official',
+        avatar: 'IMG_5039.png',
+        stories: ['IMG_5039.png', 'IMG_6344.jpeg']
+      },
+      {
+        user: 'imwinter',
+        avatar: 'IMG_1156.jpeg',
+        stories: ['IMG_1156.jpeg', 'IMG_2802.jpeg']
+      }
+    ];
 
-      const bar = document.getElementById('storyProgressBar');
-      bar.style.width = '0%';
-      let progress = 0;
+    let currentGroupIdx = 0;
+    let currentStoryIdx = 0;
+    let storyTimer = null;
+    let currentProgress = 0;
+
+    function startStoryGroup(groupIdx) {
+      currentGroupIdx = groupIdx;
+      currentStoryIdx = 0;
+      renderStory();
+      document.getElementById('storyPlayer').classList.add('active');
+    }
+
+    function renderStory() {
       clearInterval(storyTimer);
+      const group = storyGroups[currentGroupIdx];
+      const storyImg = group.stories[currentStoryIdx];
+
+      document.getElementById('storyUserName').innerText = group.user;
+      document.getElementById('storyUserAvatar').src = group.avatar;
+      document.getElementById('storyMediaImg').src = storyImg;
+
+      // 生成頂部多段進度條
+      const progressContainer = document.getElementById('storyProgressLine');
+      progressContainer.innerHTML = '';
+      group.stories.forEach((_, idx) => {
+        const track = document.createElement('div');
+        track.className = 'story-track';
+        const bar = document.createElement('div');
+        bar.className = 'story-bar';
+        if (idx < currentStoryIdx) bar.style.width = '100%';
+        else if (idx === currentStoryIdx) bar.id = 'activeStoryBar';
+        track.appendChild(bar);
+        progressContainer.appendChild(track);
+      });
+
+      currentProgress = 0;
+      const activeBar = document.getElementById('activeStoryBar');
       storyTimer = setInterval(() => {
-        progress += 2;
-        bar.style.width = progress + '%';
-        if (progress >= 100) {
+        currentProgress += 2;
+        if (activeBar) activeBar.style.width = currentProgress + '%';
+        if (currentProgress >= 100) {
           clearInterval(storyTimer);
-          closeStory();
+          nextStory();
         }
       }, 70);
     }
+
+    function nextStory() {
+      const group = storyGroups[currentGroupIdx];
+      if (currentStoryIdx < group.stories.length - 1) {
+        currentStoryIdx++;
+        renderStory();
+      } else if (currentGroupIdx < storyGroups.length - 1) {
+        currentGroupIdx++;
+        currentStoryIdx = 0;
+        renderStory();
+      } else {
+        closeStory();
+      }
+    }
+
+    function prevStory() {
+      if (currentStoryIdx > 0) {
+        currentStoryIdx--;
+        renderStory();
+      } else if (currentGroupIdx > 0) {
+        currentGroupIdx--;
+        currentStoryIdx = storyGroups[currentGroupIdx].stories.length - 1;
+        renderStory();
+      }
+    }
+
     function closeStory() {
       clearInterval(storyTimer);
       document.getElementById('storyPlayer').classList.remove('active');
@@ -1080,14 +1228,13 @@
       input.value = '';
       flow.scrollTop = flow.scrollHeight;
 
-      // 對方自動回覆
       setTimeout(() => {
         const reply = document.createElement('div');
         reply.className = 'bubble received';
         reply.innerText = '💙 OK！等等見～';
         flow.appendChild(reply);
         flow.scrollTop = flow.scrollHeight;
-      }, 1000);
+      }, 900);
     }
   </script>
 </body>
