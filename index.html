@@ -3,7 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>karina0411 • Instagram</title>
+  <title>KARINA Instagram</title>
+
+  <!-- iOS 加入主畫面專屬設定 -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KARINA Instagram" />
+  <link rel="apple-touch-icon" href="IMG_2050.jpeg" />
+  <link rel="icon" type="image/jpeg" href="IMG_2050.jpeg" />
+
   <style>
     :root {
       --bg: #000000;
@@ -141,12 +149,27 @@
     .feed-photo-container {
       width: 100%;
       background: #111;
+      position: relative;
       overflow: hidden;
     }
     .feed-photo-container img, .feed-photo-container video {
       width: 100%;
       display: block;
       object-fit: cover;
+    }
+    .mute-toggle-btn {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
     }
     .feed-btns {
       display: flex;
@@ -495,7 +518,7 @@
       cursor: pointer;
     }
 
-    /* 追蹤者連結整列按鈕 */
+    /* 追蹤者連結按鈕 */
     .following-user-row {
       display: flex;
       justify-content: space-between;
@@ -555,11 +578,13 @@
     .story-tap-left { width: 35%; height: 100%; }
     .story-tap-right { width: 65%; height: 100%; }
 
-    /* 連續短片 (Reels) 多部滑動 */
+    /* 連續短片 (Reels) 多部全螢幕捲動 */
     .reels-scroll-area {
       height: calc(100vh - 48px);
+      height: calc(100dvh - 48px);
       scroll-snap-type: y mandatory;
       overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
     }
     .reel-block {
       position: relative;
@@ -586,7 +611,7 @@
 <body>
   <div class="app-wrapper">
 
-    <!-- 背景音樂音訊元素 (來自 KARINA PLAYLIST) -->
+    <!-- 背景音樂音訊元素 -->
     <audio id="bgAudio" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-PLAYLIST/main/May%20the%20TENDERNESS%20be%20with%20you.mp3" preload="auto"></audio>
 
     <!-- 頂部 Header -->
@@ -626,11 +651,16 @@
         <div id="homeFeedList"></div>
       </section>
 
-      <!-- 2. 連續短片 Reels (5部全新影片順暢滑動) -->
+      <!-- 2. 連續短片 Reels (5 部影片，支援聲音切換與平滑滾動) -->
       <section id="pageReels" class="page">
-        <div class="reels-scroll-area">
+        <div class="reels-scroll-area" id="reelsContainer">
+
+          <!-- Reel 1 -->
           <div class="reel-block">
-            <video src="%40aespa_official%20-%20R%E2%A4%93Download.mov" autoplay loop muted playsinline webkit-playsinline></video>
+            <video id="reelVid1" src="%40aespa_official%20-%20R%E2%A4%93Download.mov" poster="IMG_4810.jpeg" preload="metadata" loop muted playsinline webkit-playsinline onclick="toggleReelAudio(this)"></video>
+            <div class="mute-toggle-btn" onclick="toggleReelAudio(document.getElementById('reelVid1'))">
+              <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            </div>
             <div class="reel-side-controls">
               <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
               <span style="font-size:11px;">33.1萬</span>
@@ -639,8 +669,12 @@
             </div>
           </div>
 
+          <!-- Reel 2 -->
           <div class="reel-block">
-            <video src="ScreenRecording_09-04-2026%2001-12-51_1.mov" loop muted playsinline webkit-playsinline></video>
+            <video id="reelVid2" src="ScreenRecording_09-04-2026%2001-12-51_1.mov" poster="IMG_2050.jpeg" preload="metadata" loop muted playsinline webkit-playsinline onclick="toggleReelAudio(this)"></video>
+            <div class="mute-toggle-btn" onclick="toggleReelAudio(document.getElementById('reelVid2'))">
+              <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            </div>
             <div class="reel-side-controls">
               <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
               <span style="font-size:11px;">45.2萬</span>
@@ -649,8 +683,12 @@
             </div>
           </div>
 
+          <!-- Reel 3 -->
           <div class="reel-block">
-            <video src="Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4" loop muted playsinline webkit-playsinline></video>
+            <video id="reelVid3" src="Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4" poster="IMG_6344.jpeg" preload="metadata" loop muted playsinline webkit-playsinline onclick="toggleReelAudio(this)"></video>
+            <div class="mute-toggle-btn" onclick="toggleReelAudio(document.getElementById('reelVid3'))">
+              <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            </div>
             <div class="reel-side-controls">
               <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
               <span style="font-size:11px;">29.8萬</span>
@@ -659,8 +697,12 @@
             </div>
           </div>
 
+          <!-- Reel 4 -->
           <div class="reel-block">
-            <video src="A8D77C74-2C63-4E2C-A9DE-429EFC12F127.mov" loop muted playsinline webkit-playsinline></video>
+            <video id="reelVid4" src="A8D77C74-2C63-4E2C-A9DE-429EFC12F127.mov" poster="IMG_2802.jpeg" preload="metadata" loop muted playsinline webkit-playsinline onclick="toggleReelAudio(this)"></video>
+            <div class="mute-toggle-btn" onclick="toggleReelAudio(document.getElementById('reelVid4'))">
+              <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            </div>
             <div class="reel-side-controls">
               <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
               <span style="font-size:11px;">51.0萬</span>
@@ -669,8 +711,12 @@
             </div>
           </div>
 
+          <!-- Reel 5 -->
           <div class="reel-block">
-            <video src="gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4" loop muted playsinline webkit-playsinline></video>
+            <video id="reelVid5" src="gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4" poster="IMG_1156.jpeg" preload="metadata" loop muted playsinline webkit-playsinline onclick="toggleReelAudio(this)"></video>
+            <div class="mute-toggle-btn" onclick="toggleReelAudio(document.getElementById('reelVid5'))">
+              <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            </div>
             <div class="reel-side-controls">
               <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
               <span style="font-size:11px;">63.7萬</span>
@@ -678,6 +724,7 @@
               <span style="font-size:11px;">4,810</span>
             </div>
           </div>
+
         </div>
       </section>
 
@@ -776,11 +823,11 @@
           </div>
         </div>
 
-        <!-- 九宮格 (完全取消任何置頂符號，點擊能連續往下滑動看全部貼文) -->
+        <!-- 九宮格 (縮圖綁定 poster 徹底解決黑屏) -->
         <div class="photo-grid" id="profileGridList"></div>
       </section>
 
-      <!-- 6. 貼文串流頁面 (Post Stream View：就像真的IG一樣，一路向下滑到底) -->
+      <!-- 6. 貼文串流頁面 (Post Stream View) -->
       <section id="pagePostStream" class="page">
         <div class="posts-stream-top">
           <span onclick="navTo('pageProfile')" style="font-size:22px; cursor:pointer;">←</span>
@@ -815,7 +862,7 @@
       </div>
     </nav>
 
-    <!-- 抽屜 1：6 位真實 Instagram 追蹤者（點擊跳轉真實 IG） -->
+    <!-- 抽屜 1：6 位真實 Instagram 追蹤者 -->
     <div id="followingSheet" class="sheet-modal">
       <div class="sheet-content">
         <div class="sheet-header">
@@ -897,7 +944,6 @@
           <!-- 6. pponyoim (可愛狗狗) -->
           <a href="https://www.instagram.com/pponyoim" target="_blank" class="following-user-row">
             <div style="display:flex; align-items:center; gap:12px;">
-              <!-- 狗頭貼 -->
               <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRz-M3C4pXv8B-9tYkH5IqfS_X6t8q-PZ8Q5Q&s" onerror="this.src='IMG_1156.jpeg'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
               <div>
                 <div style="font-weight:600; font-size:14px;">pponyoim</div>
@@ -958,7 +1004,7 @@
       </div>
     </div>
 
-    <!-- 限時動態播放器 (點擊左右切換) -->
+    <!-- 限時動態播放器 -->
     <div id="storyPlayer">
       <div class="story-progress-line" id="storyProgressLine"></div>
       <div class="story-header-user">
@@ -980,22 +1026,22 @@
   </div>
 
   <script>
-    // 完整 14 篇貼文資料庫 (包含 9 張照片與 5 部影片)
+    // 完整 14 篇貼文資料庫 (包含 9 張照片與 5 部影片，影片皆配備 poster 預防黑屏)
     const postsData = [
-      { id: 'p1', type: 'image', src: '%E4%BF%AEkarina%20(328).jpeg', caption: '나의 온 세상이 너라는 파랑으로 물든 날 💙', likes: 457000, likeUser: 'imwinter' },
-      { id: 'p2', type: 'image', src: 'IMG_2050.jpeg', caption: 'Tokyo night walk 🌃', likes: 382000, likeUser: 'katarinabluu' },
-      { id: 'p3', type: 'image', src: '%E2%9C%85%E4%BF%AE7N9A0205.jpeg', caption: '👾🛸💚', likes: 513000, likeUser: 'aerichandesu' },
-      { id: 'p4', type: 'image', src: 'IMG_6344.jpeg', caption: '바다 🌊', likes: 498000, likeUser: 'imnotningning' },
-      { id: 'p5', type: 'image', src: 'IMG_2802.jpeg', caption: '👓🖤', likes: 415000, likeUser: 'aespa_official' },
-      { id: 'p6', type: 'image', src: 'IMG_1156.jpeg', caption: '셀카 ✨', likes: 392000, likeUser: 'pponyoim' },
-      { id: 'p7', type: 'image', src: 'IMG_5039.png', caption: 'Sunny day 🌸', likes: 471000, likeUser: 'imwinter' },
-      { id: 'p8', type: 'image', src: 'IMG_6993.jpeg', caption: '눈사람 ☃️❄️', likes: 521000, likeUser: 'katarinabluu' },
-      { id: 'p9', type: 'image', src: 'IMG_4810.jpeg', caption: '겨울 ❄️💙', likes: 550000, likeUser: 'aerichandesu' },
-      { id: 'p10', type: 'video', src: '%40aespa_official%20-%20R%E2%A4%93Download.mov', caption: 'Dance break 🎵', likes: 331000, likeUser: 'imwinter' },
-      { id: 'p11', type: 'video', src: 'ScreenRecording_09-04-2026%2001-12-51_1.mov', caption: 'Behind moments 🎬', likes: 452000, likeUser: 'aespa_official' },
-      { id: 'p12', type: 'video', src: 'Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4', caption: 'Practice time 💫', likes: 298000, likeUser: 'imnotningning' },
-      { id: 'p13', type: 'video', src: 'A8D77C74-2C63-4E2C-A9DE-429EFC12F127.mov', caption: 'Vibes 🖤', likes: 510000, likeUser: 'katarinabluu' },
-      { id: 'p14', type: 'video', src: 'gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4', caption: 'Encore stage ✨', likes: 637000, likeUser: 'imwinter' }
+      { id: 'p1', type: 'image', src: '%E4%BF%AEkarina%20(328).jpeg', poster: '%E4%BF%AEkarina%20(328).jpeg', caption: '나의 온 세상이 너라는 파랑으로 물든 날 💙', likes: 457000, likeUser: 'imwinter' },
+      { id: 'p2', type: 'image', src: 'IMG_2050.jpeg', poster: 'IMG_2050.jpeg', caption: 'Tokyo night walk 🌃', likes: 382000, likeUser: 'katarinabluu' },
+      { id: 'p3', type: 'image', src: '%E2%9C%85%E4%BF%AE7N9A0205.jpeg', poster: '%E2%9C%85%E4%BF%AE7N9A0205.jpeg', caption: '👾🛸💚', likes: 513000, likeUser: 'aerichandesu' },
+      { id: 'p4', type: 'image', src: 'IMG_6344.jpeg', poster: 'IMG_6344.jpeg', caption: '바다 🌊', likes: 498000, likeUser: 'imnotningning' },
+      { id: 'p5', type: 'image', src: 'IMG_2802.jpeg', poster: 'IMG_2802.jpeg', caption: '👓🖤', likes: 415000, likeUser: 'aespa_official' },
+      { id: 'p6', type: 'image', src: 'IMG_1156.jpeg', poster: 'IMG_1156.jpeg', caption: '셀카 ✨', likes: 392000, likeUser: 'pponyoim' },
+      { id: 'p7', type: 'image', src: 'IMG_5039.png', poster: 'IMG_5039.png', caption: 'Sunny day 🌸', likes: 471000, likeUser: 'imwinter' },
+      { id: 'p8', type: 'image', src: 'IMG_6993.jpeg', poster: 'IMG_6993.jpeg', caption: '눈사람 ☃️❄️', likes: 521000, likeUser: 'katarinabluu' },
+      { id: 'p9', type: 'image', src: 'IMG_4810.jpeg', poster: 'IMG_4810.jpeg', caption: '겨울 ❄️💙', likes: 550000, likeUser: 'aerichandesu' },
+      { id: 'p10', type: 'video', src: '%40aespa_official%20-%20R%E2%A4%93Download.mov', poster: 'IMG_4810.jpeg', caption: 'Dance break 🎵', likes: 331000, likeUser: 'imwinter' },
+      { id: 'p11', type: 'video', src: 'ScreenRecording_09-04-2026%2001-12-51_1.mov', poster: 'IMG_2050.jpeg', caption: 'Behind moments 🎬', likes: 452000, likeUser: 'aespa_official' },
+      { id: 'p12', type: 'video', src: 'Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4', poster: 'IMG_6344.jpeg', caption: 'Practice time 💫', likes: 298000, likeUser: 'imnotningning' },
+      { id: 'p13', type: 'video', src: 'A8D77C74-2C63-4E2C-A9DE-429EFC12F127.mov', poster: 'IMG_2802.jpeg', caption: 'Vibes 🖤', likes: 510000, likeUser: 'katarinabluu' },
+      { id: 'p14', type: 'video', src: 'gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4', poster: 'IMG_1156.jpeg', caption: 'Encore stage ✨', likes: 637000, likeUser: 'imwinter' }
     ];
 
     // 動態渲染所有貼文與九宮格
@@ -1011,7 +1057,7 @@
       explore.innerHTML = '';
 
       postsData.forEach((post, index) => {
-        // 1. 九宮格 Cell (完全無置頂標籤)
+        // 1. 九宮格 Cell (影片綁定 poster，解決縮圖黑畫面)
         const cell = document.createElement('div');
         cell.className = 'grid-cell';
         cell.onclick = () => openPostStreamAt(post.id);
@@ -1019,7 +1065,7 @@
         if (post.type === 'video') {
           cell.innerHTML = `
             <svg class="video-corner-badge" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            <video src="${post.src}" muted playsinline></video>
+            <img src="${post.poster}" style="width:100%; height:100%; object-fit:cover;" />
           `;
         } else {
           cell.innerHTML = `<img src="${post.src}" />`;
@@ -1031,7 +1077,7 @@
         expCell.onclick = () => openPostStreamAt(post.id);
         explore.appendChild(expCell);
 
-        // 3. 貼文串流卡片 (Feed & Stream 共用結構)
+        // 3. 貼文串流卡片 (貼文區配備聲音開關喇叭)
         const cardHTML = `
           <article class="feed-item" id="stream_${post.id}">
             <div class="feed-user">
@@ -1043,7 +1089,12 @@
             </div>
             <div class="feed-photo-container">
               ${post.type === 'video' 
-                ? `<video src="${post.src}" autoplay loop muted playsinline webkit-playsinline></video>`
+                ? `
+                  <video id="vid_${post.id}" src="${post.src}" poster="${post.poster}" preload="metadata" loop muted playsinline webkit-playsinline onclick="toggleFeedVideoAudio('${post.id}')"></video>
+                  <div class="mute-toggle-btn" id="btn_mute_${post.id}" onclick="toggleFeedVideoAudio('${post.id}')">
+                    <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                  </div>
+                `
                 : `<img src="${post.src}" />`
               }
             </div>
@@ -1066,12 +1117,42 @@
       });
     }
 
-    // 點擊九宮格照片後，無縫切換到可一路向下滑動的真實「貼文串流頁面」
+    // 影片聲音切換 (支援點擊聲音開啟/靜音)
+    function toggleFeedVideoAudio(id) {
+      const vid = document.getElementById(`vid_${id}`);
+      const btn = document.getElementById(`btn_mute_${id}`);
+      if (!vid) return;
+
+      if (vid.muted) {
+        vid.muted = false;
+        vid.play();
+        btn.innerHTML = `<svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`;
+      } else {
+        vid.muted = true;
+        btn.innerHTML = `<svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`;
+      }
+    }
+
+    function toggleReelAudio(vid) {
+      if (!vid) return;
+      if (vid.muted) {
+        vid.muted = false;
+        vid.play();
+      } else {
+        vid.muted = true;
+      }
+    }
+
+    // 點擊九宮格進入貼文串流頁面
     function openPostStreamAt(postId) {
       navTo('pagePostStream');
       setTimeout(() => {
         const el = document.getElementById(`stream_${postId}`);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const video = el.querySelector('video');
+          if (video) video.play();
+        }
       }, 50);
     }
 
@@ -1116,6 +1197,12 @@
       } else {
         logo.innerHTML = `<span>Instagram</span>`;
       }
+
+      // 如果切換到 Reels 分頁，自動觸發播放第一部影片
+      if (pageId === 'pageReels') {
+        const firstVid = document.getElementById('reelVid1');
+        if (firstVid) firstVid.play();
+      }
     }
 
     // 音樂播放 / 暫停控制
@@ -1126,7 +1213,7 @@
         bgAudio.play().then(() => {
           playIcon.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
         }).catch(err => {
-          console.log('音樂播放等待使用者互動', err);
+          console.log('音樂播放等待互動', err);
         });
       } else {
         bgAudio.pause();
@@ -1145,7 +1232,7 @@
       document.getElementById(id).classList.remove('active');
     }
 
-    // 限時動態多段播放與左右點擊切換
+    // 限時動態多段播放與左右切換
     const storyGroups = [
       { user: '你的限時動態', avatar: 'IMG_4810.jpeg', stories: ['IMG_4810.jpeg', 'IMG_6993.jpeg'] },
       { user: 'aespa_official', avatar: 'IMG_5039.png', stories: ['IMG_5039.png', 'IMG_6344.jpeg'] },
