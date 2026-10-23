@@ -49,7 +49,7 @@
       position: relative;
     }
     
-    /* 頂部 Header：完整支援 iOS 安全區，避免動態島/瀏海遮擋 */
+    /* 頂部 Header：支援 iOS 安全區 */
     header.ig-top-bar {
       position: sticky;
       top: 0;
@@ -155,26 +155,36 @@
       background: #111;
       position: relative;
       overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .feed-photo-container img, .feed-photo-container video {
       width: 100%;
       display: block;
       object-fit: cover;
     }
-    .mute-toggle-btn {
+
+    /* 點擊影片時中間跳出的喇叭狀態提示 */
+    .sound-badge-indicator {
       position: absolute;
-      bottom: 14px;
-      right: 14px;
-      width: 30px;
-      height: 30px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
-      background: rgba(0,0,0,0.65);
+      background: rgba(0,0,0,0.7);
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 20;
     }
+    .sound-badge-indicator.visible { opacity: 1; }
+
     .feed-btns {
       display: flex;
       justify-content: space-between;
@@ -237,9 +247,9 @@
     }
     .profile-desc .realname { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
 
-    /* 音樂膠囊按鈕 */
+    /* 音樂膠囊按鈕（完整跑馬燈輪播） */
     .music-pill-btn {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 8px;
       background: #1a1a1a;
@@ -251,13 +261,23 @@
       cursor: pointer;
       margin-bottom: 14px;
       width: 100%;
+      overflow: hidden;
     }
     .music-pill-btn:active { background: #262626; }
-    .music-pill-text {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .music-marquee-container {
       flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+    .music-marquee-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 14s linear infinite;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
     }
 
     .profile-actions {
@@ -319,7 +339,7 @@
       z-index: 5;
     }
 
-    /* 貼文串流頁面頂部導覽 (← 貼文) */
+    /* 貼文串流頁面頂部導覽 */
     .posts-stream-top {
       position: sticky;
       top: 0;
@@ -587,33 +607,53 @@
     .story-tap-left { width: 35%; height: 100%; }
     .story-tap-right { width: 65%; height: 100%; }
 
-    /* 連續短片 (Reels) 多部全螢幕捲動 */
+    /* 連續短片 (Reels) 多部全螢幕捲動：不截斷橫向影片，愛心/留言/聲音全同屏呈現 */
     .reels-scroll-area {
       height: calc(100vh - 52px - env(safe-area-inset-bottom, 0px));
       height: calc(100dvh - 52px - env(safe-area-inset-bottom, 0px));
       scroll-snap-type: y mandatory;
       overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
+      position: relative;
     }
     .reel-block {
       position: relative;
       height: 100%;
       scroll-snap-align: start;
       background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
     }
+    /* 核心修正：使用 contain 讓橫式影片完整顯示，不被上下截斷 */
     .reel-block video {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      background: #000;
     }
+    /* 右側操作按鈕欄：垂直置中且同屏呈現 */
     .reel-side-controls {
       position: absolute;
-      right: 12px;
-      bottom: 40px;
+      right: 14px;
+      bottom: calc(30px + env(safe-area-inset-bottom, 0px));
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
       align-items: center;
+      z-index: 30;
+    }
+    .reel-action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .reel-action-btn span {
+      font-size: 11px;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -659,77 +699,112 @@
         <div id="homeFeedList"></div>
       </section>
 
-      <!-- 2. 連續短片 Reels (5 部影片：滑到哪部自動播放，離開立即暫停) -->
+      <!-- 2. 連續短片 Reels (橫/直片皆不截斷，點畫面任一處即開關聲音) -->
       <section id="pageReels" class="page">
         <div class="reels-scroll-area" id="reelsContainer">
 
           <!-- Reel 1 -->
-          <div class="reel-block">
-            <video class="reel-video" id="reelVid1" src="%40aespa_official%20-%20R%E2%A4%93Download.mov#t=0.001" preload="auto" loop muted playsinline webkit-playsinline onclick="toggleReelAudio(this)"></video>
-            <div class="mute-toggle-btn" onclick="toggleReelAudio(document.getElementById('reelVid1'))">
-              <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reelVid1'), 'badge_r1')">
+            <video class="reel-video" id="reelVid1" src="%40aespa_official%20-%20R%E2%A4%93Download.mov#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
+            <div class="sound-badge-indicator" id="badge_r1">
+              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
             </div>
-            <div class="reel-side-controls">
-              <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              <span style="font-size:11px;">33.1萬</span>
-              <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-              <span style="font-size:11px;">1,208</span>
+            <div class="reel-side-controls" onclick="event.stopPropagation()">
+              <div class="reel-action-btn" onclick="toggleReelHeart('rh1', 'rc1', 331000)">
+                <span id="rh1"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+                <span id="rc1">33.1萬</span>
+              </div>
+              <div class="reel-action-btn">
+                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span>1,208</span>
+              </div>
+              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reelVid1'), 'badge_r1')">
+                <span id="sound_icon_r1"><svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></span>
+              </div>
             </div>
           </div>
 
           <!-- Reel 2 -->
-          <div class="reel-block">
-            <video class="reel-video" id="reelVid2" src="ScreenRecording_09-04-2026%2001-12-51_1.mov#t=0.001" preload="auto" loop muted playsinline webkit-playsinline onclick="toggleReelAudio(this)"></video>
-            <div class="mute-toggle-btn" onclick="toggleReelAudio(document.getElementById('reelVid2'))">
-              <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reelVid2'), 'badge_r2')">
+            <video class="reel-video" id="reelVid2" src="ScreenRecording_09-04-2026%2001-12-51_1.mov#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
+            <div class="sound-badge-indicator" id="badge_r2">
+              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
             </div>
-            <div class="reel-side-controls">
-              <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              <span style="font-size:11px;">45.2萬</span>
-              <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-              <span style="font-size:11px;">2,190</span>
+            <div class="reel-side-controls" onclick="event.stopPropagation()">
+              <div class="reel-action-btn" onclick="toggleReelHeart('rh2', 'rc2', 452000)">
+                <span id="rh2"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+                <span id="rc2">45.2萬</span>
+              </div>
+              <div class="reel-action-btn">
+                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span>2,190</span>
+              </div>
+              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reelVid2'), 'badge_r2')">
+                <span id="sound_icon_r2"><svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></span>
+              </div>
             </div>
           </div>
 
           <!-- Reel 3 -->
-          <div class="reel-block">
-            <video class="reel-video" id="reelVid3" src="Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4#t=0.001" preload="auto" loop muted playsinline webkit-playsinline onclick="toggleReelAudio(this)"></video>
-            <div class="mute-toggle-btn" onclick="toggleReelAudio(document.getElementById('reelVid3'))">
-              <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reelVid3'), 'badge_r3')">
+            <video class="reel-video" id="reelVid3" src="Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
+            <div class="sound-badge-indicator" id="badge_r3">
+              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
             </div>
-            <div class="reel-side-controls">
-              <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              <span style="font-size:11px;">29.8萬</span>
-              <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-              <span style="font-size:11px;">978</span>
+            <div class="reel-side-controls" onclick="event.stopPropagation()">
+              <div class="reel-action-btn" onclick="toggleReelHeart('rh3', 'rc3', 298000)">
+                <span id="rh3"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+                <span id="rc3">29.8萬</span>
+              </div>
+              <div class="reel-action-btn">
+                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span>978</span>
+              </div>
+              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reelVid3'), 'badge_r3')">
+                <span id="sound_icon_r3"><svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></span>
+              </div>
             </div>
           </div>
 
           <!-- Reel 4 -->
-          <div class="reel-block">
-            <video class="reel-video" id="reelVid4" src="A8D77C74-2C63-4E2C-A9DE-429EFC12F127.mov#t=0.001" preload="auto" loop muted playsinline webkit-playsinline onclick="toggleReelAudio(this)"></video>
-            <div class="mute-toggle-btn" onclick="toggleReelAudio(document.getElementById('reelVid4'))">
-              <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reelVid4'), 'badge_r4')">
+            <video class="reel-video" id="reelVid4" src="A8D77C74-2C63-4E2C-A9DE-429EFC12F127.mov#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
+            <div class="sound-badge-indicator" id="badge_r4">
+              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
             </div>
-            <div class="reel-side-controls">
-              <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              <span style="font-size:11px;">51.0萬</span>
-              <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-              <span style="font-size:11px;">3,421</span>
+            <div class="reel-side-controls" onclick="event.stopPropagation()">
+              <div class="reel-action-btn" onclick="toggleReelHeart('rh4', 'rc4', 510000)">
+                <span id="rh4"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+                <span id="rc4">51.0萬</span>
+              </div>
+              <div class="reel-action-btn">
+                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span>3,421</span>
+              </div>
+              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reelVid4'), 'badge_r4')">
+                <span id="sound_icon_r4"><svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></span>
+              </div>
             </div>
           </div>
 
           <!-- Reel 5 -->
-          <div class="reel-block">
-            <video class="reel-video" id="reelVid5" src="gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4#t=0.001" preload="auto" loop muted playsinline webkit-playsinline onclick="toggleReelAudio(this)"></video>
-            <div class="mute-toggle-btn" onclick="toggleReelAudio(document.getElementById('reelVid5'))">
-              <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reelVid5'), 'badge_r5')">
+            <video class="reel-video" id="reelVid5" src="gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
+            <div class="sound-badge-indicator" id="badge_r5">
+              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
             </div>
-            <div class="reel-side-controls">
-              <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              <span style="font-size:11px;">63.7萬</span>
-              <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-              <span style="font-size:11px;">4,810</span>
+            <div class="reel-side-controls" onclick="event.stopPropagation()">
+              <div class="reel-action-btn" onclick="toggleReelHeart('rh5', 'rc5', 637000)">
+                <span id="rh5"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+                <span id="rc5">63.7萬</span>
+              </div>
+              <div class="reel-action-btn">
+                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span>4,810</span>
+              </div>
+              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reelVid5'), 'badge_r5')">
+                <span id="sound_icon_r5"><svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg></span>
+              </div>
             </div>
           </div>
 
@@ -805,11 +880,14 @@
             <div>aespa</div>
           </div>
 
+          <!-- 音樂播放膠囊（完整跑馬燈輪播） -->
           <div class="music-pill-btn" onclick="togglePlayMusic()">
             <span id="musicPlayIcon">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             </span>
-            <span class="music-pill-text">May the TENDERNESS be with you! (feat. KARI...</span>
+            <div class="music-marquee-container">
+              <span class="music-marquee-text">May the TENDERNESS be with you! (feat. KARINA) JANNABI</span>
+            </div>
           </div>
 
           <div class="profile-actions">
@@ -827,7 +905,6 @@
           </div>
         </div>
 
-        <!-- 九宮格 (原生時間錨點第一幀真實縮圖) -->
         <div class="photo-grid" id="profileGridList"></div>
       </section>
 
@@ -844,23 +921,18 @@
 
     <!-- 底部固定導覽列 -->
     <nav class="fixed-bottom-bar">
-      <!-- 1. 首頁 -->
       <div class="nav-btn" onclick="navTo('pageFeed')">
         <svg width="22" height="22" fill="#fff" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
       </div>
-      <!-- 2. 連續短片 Reels -->
       <div class="nav-btn" onclick="navTo('pageReels')">
         <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
       </div>
-      <!-- 3. 最中間：訊息小飛機 -->
       <div class="nav-btn" onclick="navTo('pageMessages')">
         <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </div>
-      <!-- 4. 探索 -->
       <div class="nav-btn" onclick="navTo('pageExplore')">
         <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
-      <!-- 5. 個人主頁 -->
       <div class="nav-btn" onclick="navTo('pageProfile')">
         <img class="nav-user-avatar active" src="IMG_4810.jpeg" alt="Me" />
       </div>
@@ -1024,7 +1096,6 @@
   </div>
 
   <script>
-    // 貼文資料庫 (影片使用原生第一格真實畫面 #t=0.001)
     const postsData = [
       { id: 'p1', type: 'image', src: '%E4%BF%AEkarina%20(328).jpeg', caption: '나의 온 세상이 너라는 파랑으로 물든 날 💙', likes: 457000, likeUser: 'imwinter' },
       { id: 'p2', type: 'image', src: 'IMG_2050.jpeg', caption: 'Tokyo night walk 🌃', likes: 382000, likeUser: 'katarinabluu' },
@@ -1056,7 +1127,7 @@
       explore.innerHTML = '';
 
       postsData.forEach((post, index) => {
-        // 九宮格 Cell：影片使用真實幀作為縮圖
+        // 九宮格 Cell
         const cell = document.createElement('div');
         cell.className = 'grid-cell';
         cell.onclick = () => openPostStreamAt(post.id);
@@ -1075,7 +1146,7 @@
         expCell.onclick = () => openPostStreamAt(post.id);
         explore.appendChild(expCell);
 
-        // 串流卡片
+        // 貼文串流卡片（點擊畫面任一處即開關聲音）
         const cardHTML = `
           <article class="feed-item" id="stream_${post.id}">
             <div class="feed-user">
@@ -1085,12 +1156,12 @@
               </div>
               <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
             </div>
-            <div class="feed-photo-container">
+            <div class="feed-photo-container" ${post.type === 'video' ? `onclick="toggleVideoSound(document.getElementById('vid_${post.id}'), 'badge_f_${post.id}')"` : ''}>
               ${post.type === 'video' 
                 ? `
-                  <video class="stream-video" id="vid_${post.id}" src="${post.rawSrc}" preload="auto" loop muted playsinline webkit-playsinline onclick="toggleFeedVideoAudio('${post.id}')"></video>
-                  <div class="mute-toggle-btn" id="btn_mute_${post.id}" onclick="toggleFeedVideoAudio('${post.id}')">
-                    <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                  <video class="stream-video" id="vid_${post.id}" src="${post.rawSrc}" preload="auto" loop muted playsinline webkit-playsinline></video>
+                  <div class="sound-badge-indicator" id="badge_f_${post.id}">
+                    <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
                   </div>
                 `
                 : `<img src="${post.src}" />`
@@ -1118,26 +1189,64 @@
       setupSwipeGestures();
     }
 
-    // 串流影片 IntersectionObserver：只有在畫面正中間的影片自動播放，離開立即暫停不重疊
+    // 點擊任何一處切換影片聲音，並彈出動畫提示
+    function toggleVideoSound(videoEl, badgeId) {
+      if (!videoEl) return;
+      const badge = document.getElementById(badgeId);
+
+      if (videoEl.muted) {
+        videoEl.muted = false;
+        videoEl.play();
+        if (badge) {
+          badge.innerHTML = `<svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>`;
+          badge.classList.add('visible');
+          setTimeout(() => badge.classList.remove('visible'), 600);
+        }
+      } else {
+        videoEl.muted = true;
+        if (badge) {
+          badge.innerHTML = `<svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`;
+          badge.classList.add('visible');
+          setTimeout(() => badge.classList.remove('visible'), 600);
+        }
+      }
+    }
+
+    // Reels 愛心切換
+    function toggleReelHeart(heartId, countId, base) {
+      const el = document.getElementById(heartId);
+      const isLiked = el.dataset.liked === 'true';
+      if (!isLiked) {
+        el.innerHTML = `<svg width="28" height="28" fill="#ff3040" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+        el.dataset.liked = 'true';
+        document.getElementById(countId).innerText = `${((base+1)/10000).toFixed(1)}萬`;
+      } else {
+        el.innerHTML = `<svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+        el.dataset.liked = 'false';
+        document.getElementById(countId).innerText = `${(base/10000).toFixed(1)}萬`;
+      }
+    }
+
+    // 串流影片 IntersectionObserver：只有在正中間的影片自動播放，滑開自動暫停
     function setupVideoAutoPlayObserver() {
       if (videoObserver) videoObserver.disconnect();
       videoObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const video = entry.target;
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
             video.play().catch(()=>{});
           } else {
             video.pause();
           }
         });
-      }, { threshold: [0.2, 0.6] });
+      }, { threshold: [0.1, 0.5] });
 
       document.querySelectorAll('.stream-video, .reel-video').forEach(vid => {
         videoObserver.observe(vid);
       });
     }
 
-    // 手指滑動手勢：手指往右滑即返回上個畫面 (如原生 iOS App)
+    // 手指左右滑動原生手勢支援（Swipe Left & Swipe Right）
     function setupSwipeGestures() {
       let touchStartX = 0;
       let touchStartY = 0;
@@ -1153,30 +1262,34 @@
         const deltaX = touchEndX - touchStartX;
         const deltaY = touchEndY - touchStartY;
 
-        // 水平滑動幅度大於 80px 且垂直位移小於 50px
-        if (deltaX > 80 && Math.abs(deltaY) < 50) {
-          // 如果正在貼文串流頁，往右滑返回個人主頁
-          if (document.getElementById('pagePostStream').classList.contains('active')) {
-            navTo('pageProfile');
+        // 水平滑動幅度大於 70px 且垂直位移小於 60px
+        if (Math.abs(deltaY) < 60) {
+          // 向右滑 (Swipe Right)
+          if (deltaX > 70) {
+            if (document.getElementById('pagePostStream').classList.contains('active')) {
+              navTo('pageProfile');
+            } else if (document.getElementById('chatRoom').classList.contains('active')) {
+              closeChat();
+            } else if (document.getElementById('pageMessages').classList.contains('active')) {
+              navTo('pageFeed');
+            }
           }
-          // 如果正在聊天室，往右滑返回收件匣
-          else if (document.getElementById('chatRoom').classList.contains('active')) {
-            closeChat();
+          // 向左滑 (Swipe Left)
+          else if (deltaX < -70) {
+            if (document.getElementById('pageFeed').classList.contains('active')) {
+              navTo('pageMessages');
+            }
           }
         }
       }, { passive: true });
     }
 
-    // 暫停全站所有影片
     function pauseAllVideos() {
-      document.querySelectorAll('video').forEach(v => {
-        v.pause();
-      });
+      document.querySelectorAll('video').forEach(v => v.pause());
     }
 
-    // 切換分頁導覽
     function navTo(pageId) {
-      pauseAllVideos(); // 切換分頁後立即暫停所有影片
+      pauseAllVideos();
 
       document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
       const target = document.getElementById(pageId);
@@ -1202,7 +1315,6 @@
       }
     }
 
-    // 點擊九宮格開啟貼文串流
     function openPostStreamAt(postId) {
       pauseAllVideos();
       navTo('pagePostStream');
@@ -1214,33 +1326,6 @@
       }, 50);
     }
 
-    // 聲音開關控制
-    function toggleFeedVideoAudio(id) {
-      const vid = document.getElementById(`vid_${id}`);
-      const btn = document.getElementById(`btn_mute_${id}`);
-      if (!vid) return;
-
-      if (vid.muted) {
-        vid.muted = false;
-        vid.play();
-        btn.innerHTML = `<svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`;
-      } else {
-        vid.muted = true;
-        btn.innerHTML = `<svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`;
-      }
-    }
-
-    function toggleReelAudio(vid) {
-      if (!vid) return;
-      if (vid.muted) {
-        vid.muted = false;
-        vid.play();
-      } else {
-        vid.muted = true;
-      }
-    }
-
-    // 點讚切換
     function toggleHeart(postId, baseLikes, user) {
       const heart = document.getElementById(`heart_${postId}`);
       const text = document.getElementById(`likes_${postId}`);
@@ -1257,7 +1342,6 @@
       }
     }
 
-    // 音樂控制
     const bgAudio = document.getElementById('bgAudio');
     const playIcon = document.getElementById('musicPlayIcon');
     function togglePlayMusic() {
@@ -1271,12 +1355,10 @@
       }
     }
 
-    // 抽屜控制
     function openFollowingSheet() { document.getElementById('followingSheet').classList.add('active'); }
     function openNotificationSheet() { document.getElementById('notificationSheet').classList.add('active'); }
     function closeSheet(id) { document.getElementById(id).classList.remove('active'); }
 
-    // 限時動態播放
     const storyGroups = [
       { user: '你的限時動態', avatar: 'IMG_4810.jpeg', stories: ['IMG_4810.jpeg', 'IMG_6993.jpeg'] },
       { user: 'aespa_official', avatar: 'IMG_5039.png', stories: ['IMG_5039.png', 'IMG_6344.jpeg'] },
@@ -1360,7 +1442,6 @@
       document.getElementById('storyPlayer').classList.remove('active');
     }
 
-    // 聊天室
     function openChat(username, avatarSrc, initialMsg) {
       document.getElementById('chatHeaderName').innerText = username;
       document.getElementById('chatHeaderImg').src = avatarSrc;
@@ -1392,9 +1473,7 @@
       }, 900);
     }
 
-    // 初始化啟動
     initApp();
   </script>
 </body>
 </html>
-
