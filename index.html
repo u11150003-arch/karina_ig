@@ -49,7 +49,7 @@
       position: relative;
     }
     
-    /* 頂部 Header：私密帳號鎖頭規格 */
+    /* 頂部 Header：私密帳號規格（鎖頭與下拉箭頭，無藍勾） */
     header.ig-top-bar {
       position: sticky;
       top: 0;
@@ -494,24 +494,6 @@
       align-self: flex-end;
       border-bottom-right-radius: 4px;
     }
-    .quick-replies-tray {
-      display: flex;
-      gap: 8px;
-      padding: 6px 14px;
-      overflow-x: auto;
-      background: #111;
-      border-top: 0.5px solid #222;
-    }
-    .quick-reply-chip {
-      background: #222;
-      color: var(--blue);
-      font-size: 12px;
-      padding: 5px 10px;
-      border-radius: 14px;
-      white-space: nowrap;
-      cursor: pointer;
-      border: 0.5px solid #333;
-    }
     .chat-input-bar {
       display: flex;
       padding: 8px 14px;
@@ -766,7 +748,7 @@
           <img class="dm-avatar" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg" onerror="this.src='IMG_7077.jpeg'" />
           <div class="dm-details">
             <div class="dm-username">imwinter</div>
-            <div class="dm-snippet">我買了一堆狗狗衣服！等等一起幫波妞穿 • 2小時</div>
+            <div class="dm-snippet">我買了一堆狗狗衣服 等等一起幫波妞穿 • 2小時</div>
           </div>
         </div>
 
@@ -775,7 +757,7 @@
           <img class="dm-avatar" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8043.jpeg" onerror="this.src='IMG_8043.jpeg'" />
           <div class="dm-details">
             <div class="dm-username">imnotningning</div>
-            <div class="dm-snippet">想問妳海底撈喉糖是在哪裡網購的？ • 5小時</div>
+            <div class="dm-snippet">問妳海底撈喉糖是在哪網購的我也想買 • 5小時</div>
           </div>
         </div>
 
@@ -784,7 +766,7 @@
           <img class="dm-avatar" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png" onerror="this.src='IMG_8042.png'" />
           <div class="dm-details">
             <div class="dm-username">aerichandesu</div>
-            <div class="dm-snippet">上次巡迴一起吃的塔可餅好想再吃，下次再去！ • 昨天</div>
+            <div class="dm-snippet">上次巡迴一起吃的塔可餅好想再吃 下次再去 • 昨天</div>
           </div>
         </div>
       </section>
@@ -964,7 +946,7 @@
       </div>
     </div>
 
-    <!-- 抽屜 2：通知抽屜 -->
+    <!-- 抽屜 2：通知抽屜 (符合作為私密帳號好友按讚的真實情境) -->
     <div id="notificationSheet" class="sheet-modal">
       <div class="sheet-content">
         <div class="sheet-header">
@@ -977,7 +959,7 @@
             <div style="display:flex; align-items:center; gap:10px;">
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg" onerror="this.src='IMG_7077.jpeg'" style="width:42px;height:42px;border-radius:50%;object-fit:cover;" />
               <div style="font-size:13px; line-height:1.4;">
-                <b>imwinter</b> 說你的貼文讚。<span style="color:var(--subtext);"> 2小時</span>
+                <b>imwinter</b> 說你的貼文讚 <span style="color:var(--subtext);">2小時</span>
               </div>
             </div>
             <img src="%E4%BF%AEkarina%20(328).jpeg" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" />
@@ -988,7 +970,7 @@
             <div style="display:flex; align-items:center; gap:10px;">
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8043.jpeg" onerror="this.src='IMG_8043.jpeg'" style="width:42px;height:42px;border-radius:50%;object-fit:cover;" />
               <div style="font-size:13px; line-height:1.4;">
-                <b>imnotningning</b> 和其他人都說你轉發的貼文讚。<span style="color:var(--subtext);"> 1天</span>
+                <b>imnotningning</b> 說你的貼文讚 <span style="color:var(--subtext);">1天</span>
               </div>
             </div>
             <img src="IMG_2050.jpeg" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" />
@@ -997,7 +979,7 @@
       </div>
     </div>
 
-    <!-- 聊天室視窗 (支援點擊快捷回覆與中文對話劇情) -->
+    <!-- 聊天室視窗 (全自動對話流程，點擊輸入框即自動送出隨興對白) -->
     <div id="chatRoom">
       <div class="chat-top">
         <span onclick="closeChat()" style="font-size:20px; cursor:pointer;">←</span>
@@ -1005,11 +987,9 @@
         <span id="chatHeaderName" style="font-weight:600; font-size:15px;"></span>
       </div>
       <div class="chat-body" id="chatMessageFlow"></div>
-      <!-- 快捷回覆列 -->
-      <div class="quick-replies-tray" id="quickRepliesTray"></div>
       <div class="chat-input-bar">
-        <input type="text" id="chatInputText" placeholder="發送訊息..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
-        <button class="chat-send-btn" onclick="sendChatMessage()">傳送</button>
+        <input type="text" id="chatInputText" placeholder="發送訊息..." onclick="handleAutoChat()" onkeydown="if(event.key==='Enter') handleAutoChat()" />
+        <button class="chat-send-btn" onclick="handleAutoChat()">傳送</button>
       </div>
     </div>
 
@@ -1035,68 +1015,65 @@
   </div>
 
   <script>
-    // 1. 原本經典 9 張照片 (文案為純英文與 Emoji)
+    // 1. 原本經典 9 張照片 (私密帳號讚數約 180~380)
     const basePhotos = [
-      { id: 'bp1', type: 'image', src: '%E4%BF%AEkarina%20(328).jpeg', caption: 'Blue moment 💙', likes: 457000, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'bp2', type: 'image', src: 'IMG_2050.jpeg', caption: 'Tokyo night walk 🌃', likes: 382000, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'bp3', type: 'image', src: '%E2%9C%85%E4%BF%AE7N9A0205.jpeg', caption: 'Alien antenna vibe 👾🛸', likes: 513000, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'bp4', type: 'image', src: 'IMG_6344.jpeg', caption: 'By the sea 🌊💙', likes: 498000, likeUser: 'imnotningning', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'bp5', type: 'image', src: 'IMG_2802.jpeg', caption: 'Glasses day 👓🖤', likes: 415000, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'bp6', type: 'image', src: 'IMG_1156.jpeg', caption: 'Close up selfie ✨', likes: 392000, likeUser: 'pponyoim', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'bp7', type: 'image', src: 'IMG_5039.png', caption: 'Sunny spring 🌸🤍', likes: 471000, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'bp8', type: 'image', src: 'IMG_6993.jpeg', caption: 'Snowman ☃️❄️', likes: 521000, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'bp9', type: 'image', src: 'IMG_4810.jpeg', caption: 'Winter tenderness ❄️💙', likes: 550000, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' }
+      { id: 'bp1', type: 'image', src: '%E4%BF%AEkarina%20(328).jpeg', caption: 'Blue moment 💙', likes: 247, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'bp2', type: 'image', src: 'IMG_2050.jpeg', caption: 'Tokyo night walk 🌃', likes: 198, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'bp3', type: 'image', src: '%E2%9C%85%E4%BF%AE7N9A0205.jpeg', caption: 'Alien antenna vibe 👾🛸', likes: 312, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'bp4', type: 'image', src: 'IMG_6344.jpeg', caption: 'By the sea 🌊💙', likes: 289, likeUser: 'imnotningning', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'bp5', type: 'image', src: 'IMG_2802.jpeg', caption: 'Glasses day 👓🖤', likes: 231, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'bp6', type: 'image', src: 'IMG_1156.jpeg', caption: 'Close up selfie ✨', likes: 345, likeUser: 'pponyoim', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'bp7', type: 'image', src: 'IMG_5039.png', caption: 'Sunny spring 🌸🤍', likes: 268, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'bp8', type: 'image', src: 'IMG_6993.jpeg', caption: 'Snowman ☃️❄️', likes: 356, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'bp9', type: 'image', src: 'IMG_4810.jpeg', caption: 'Winter tenderness ❄️💙', likes: 382, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' }
     ];
 
-    // 2. 個人主頁（九宮格）資料：原本照 + 3部原影片 + 15部指定新影片，發文者統一為 karina0411 (共27則)
+    // 2. 個人主頁（九宮格）資料：原本照片 + 3部原影片 + 15部指定新影片，發文者統一為 karina0411 (共27則)
     const profileItems = [
       ...basePhotos,
       // 原有 3 部影片
-      { id: 'pr_v1', type: 'video', src: 'Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4', caption: 'Practice 💫', likes: 312000, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v2', type: 'video', src: 'ScreenRecording_09-04-2026%2001-12-51_1.mov', caption: 'Behind moments 🎬', likes: 452000, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v3', type: 'video', src: 'gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4', caption: 'Encore stage ✨', likes: 637000, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      // 新增 15 部影片
-      { id: 'pr_v4', type: 'video', src: 'assets/videos/karina_video_blowflower.mp4', caption: 'Spring breeze 🌸', likes: 421000, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v5', type: 'video', src: 'assets/videos/karina_video_bowl.mp4', caption: 'Cute props 🥣✨', likes: 388000, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v6', type: 'video', src: 'assets/videos/karina_video_christmas.mp4', caption: 'Christmas time 🎄🎅', likes: 512000, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v7', type: 'video', src: 'assets/videos/karina_video_daijobo.mp4', caption: 'Daijobo 💖✨', likes: 445000, likeUser: 'imnotningning', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v8', type: 'video', src: 'assets/videos/karina_video_firstsnow.mp4', caption: 'First snow ❄️🤍', likes: 578000, likeUser: 'pponyoim', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v9', type: 'video', src: 'assets/videos/karina_video_japan.mp4', caption: 'Tokyo street 🗼🖤', likes: 462000, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v10', type: 'video', src: 'assets/videos/karina_video_romance.mp4', caption: 'Romance filter 🩰✨', likes: 529000, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v11', type: 'video', src: 'assets/videos/karina_video_scarfvlog.mp4', caption: 'Scarf vlog 🧣❄️', likes: 489000, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v12', type: 'video', src: 'assets/videos/karina_video_shoes.mp4', caption: 'OOTD 👟🖤', likes: 376000, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v13', type: 'video', src: 'assets/videos/karina_video_snow_vlog.mp4', caption: 'Winter day vlog ☃️', likes: 541000, likeUser: 'imnotningning', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v14', type: 'video', src: 'assets/videos/karina_video_twoofheart.mp4', caption: 'Two of heart 💕🫶', likes: 602000, likeUser: 'pponyoim', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v15', type: 'video', src: 'assets/videos/karina_video_vlog.mp4', caption: 'Tour life vlog 🌙', likes: 433000, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v16', type: 'video', src: 'assets/videos/karinagiselle_video_flirt.mp4', caption: 'With Gigi 👭💖', likes: 567000, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v17', type: 'video', src: 'assets/videos/karinagiselle_video_hajima.mp4', caption: 'Hajima 😆✨', likes: 498000, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v18', type: 'video', src: 'assets/videos/karina_video_tamagotchi.mp4', caption: 'Tamagotchi 👾🎮', likes: 412000, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' }
+      { id: 'pr_v1', type: 'video', src: 'Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4', caption: 'Practice 💫', likes: 215, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v2', type: 'video', src: 'ScreenRecording_09-04-2026%2001-12-51_1.mov', caption: 'Behind moments 🎬', likes: 289, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v3', type: 'video', src: 'gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4', caption: 'Encore stage ✨', likes: 374, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      // 新增 15 部影片 (依最新指令配置)
+      { id: 'pr_v4', type: 'video', src: 'assets/videos/karina_video_blowflower.mp4', caption: 'Spring breeze 🌸', likes: 242, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v5', type: 'video', src: 'assets/videos/karina_video_bowl.mp4', caption: 'Cute props 🥣✨', likes: 218, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v6', type: 'video', src: 'assets/videos/karina_video_christmas.mp4', caption: 'Christmas time 🎄🎅', likes: 312, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v7', type: 'video', src: 'assets/videos/karina_video_daijobo.mp4', caption: 'Daijobo 💖✨', likes: 275, likeUser: 'imnotningning', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v8', type: 'video', src: 'assets/videos/karina_video_firstsnow.mp4', caption: 'First snow ❄️🤍', likes: 368, likeUser: 'pponyoim', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v9', type: 'video', src: 'assets/videos/karina_video_japan.mp4', caption: 'Tokyo street 🗼🖤', likes: 295, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v10', type: 'video', src: 'assets/videos/karina_video_illit.mp4', caption: 'Challenge with friends 💫', likes: 341, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v11', type: 'video', src: 'assets/videos/karina_video_scarfvlog.mp4', caption: 'Scarf vlog 🧣❄️', likes: 289, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v12', type: 'video', src: 'assets/videos/karina_video_shoes.mp4', caption: 'OOTD 👟🖤', likes: 234, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v13', type: 'video', src: 'assets/videos/karina_video_snow_vlog.mp4', caption: 'Winter day vlog ☃️', likes: 351, likeUser: 'imnotningning', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v14', type: 'video', src: 'assets/videos/karina_video_twoofheart.mp4', caption: 'Two of heart 💕🫶', likes: 392, likeUser: 'pponyoim', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v15', type: 'video', src: 'assets/videos/karina_video_vlog.mp4', caption: 'Tour life vlog 🌙', likes: 263, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v16', type: 'video', src: 'assets/videos/karinagiselle_video_flirt.mp4', caption: 'With Gigi 👭💖', likes: 377, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v17', type: 'video', src: 'assets/videos/karinagiselle_video_hajima.mp4', caption: 'Hajima 😆✨', likes: 308, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v18', type: 'video', src: 'assets/videos/karina_video_tamagotchi.mp4', caption: 'Tamagotchi 👾🎮', likes: 245, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' }
     ];
 
-    // 3. 搜尋/探索頁面（放大鏡 🔍）：完全移除照片，純影片，發文者統一為 aespa_official (17部)
+    // 3. 搜尋/探索頁面（放大鏡 🔍）：完全移除照片，純影片九宮格，發文者統一為 aespa_official，特例除外 (16部)
     const exploreItems = [
-      { id: 'ex_v1', src: 'assets/videos/karina_video_genie.mp4', caption: 'Genie challenge 🧞‍♀️' },
-      { id: 'ex_v2', src: 'assets/videos/karina_video_guilty.mp4', caption: 'Guilty 🖤' },
-      { id: 'ex_v3', src: 'assets/videos/karina_video_getaguitar.mp4', caption: 'Get A Guitar 🎸' },
-      { id: 'ex_v4', src: 'assets/videos/karina_video_catch.mp4', caption: 'Catch it 🎀' },
-      { id: 'ex_v5', src: 'assets/videos/karina_video_chase.mp4', caption: 'Chase the rhythm 💫' },
-      { id: 'ex_v6', src: 'assets/videos/karina_video_lemonade.mp4', caption: 'Lemonade 🍋' },
-      { id: 'ex_v7', src: 'assets/videos/karina_video_lemontang.mp4', caption: 'Lemon vibes 🍹' },
-      { id: 'ex_v8', src: 'assets/videos/karina_video_snowdance.mp4', caption: 'Snow dance ❄️' },
-      { id: 'ex_v9', src: 'assets/videos/karina_video_aegwoo.mp4', caption: 'Aegwoo moment 💙' },
-      { id: 'ex_v10', src: 'assets/videos/karina_video_everyday.mp4', caption: 'Everyday mood 🤍' },
-      { id: 'ex_v11', src: 'assets/videos/karina_video_lesserafim.mp4', caption: 'Dance challenge 💃' },
-      { id: 'ex_v12', src: 'assets/videos/karina_video_overdrive.mp4', caption: 'Overdrive ⚡' },
-      { id: 'ex_v13', src: 'assets/videos/karina_video_richman.mp4', caption: 'Rich Man vibes 🎧' },
-      { id: 'ex_v14', src: 'assets/videos/karina_video_serenade.mp4', caption: 'Serenade 🎶' },
-      { id: 'ex_v15', src: 'assets/videos/karina_video_taeyong.mp4', caption: 'Taeyong x Karina 🕺' },
-      { id: 'ex_v16', src: 'assets/videos/karina_video_tox.mp4', caption: 'Tox 🕶️' },
-      { id: 'ex_v17', src: 'assets/videos/karinagiselle_video_dance.mp4', caption: 'Dance duo 👯‍♀️' }
+      { id: 'ex_v1', src: 'assets/videos/karina_video_genie.mp4', caption: 'Genie challenge 🧞‍♀️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v2', src: 'assets/videos/karina_video_guilty.mp4', caption: 'Guilty 🖤', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v3', src: 'assets/videos/karina_video_getaguitar.mp4', caption: 'Get A Guitar 🎸', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v4', src: 'assets/videos/karina_video_catch.mp4', caption: 'Catch it 🎀', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v5', src: 'assets/videos/karina_video_chase.mp4', caption: 'Chase the rhythm 💫', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v6', src: 'assets/videos/karina_video_lemonade.mp4', caption: 'Lemonade 🍋', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v7', src: 'assets/videos/karina_video_lemontang.mp4', caption: 'Lemon vibes 🍹', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v8', src: 'assets/videos/karina_video_beautifulchristmas.mp4', caption: 'Beautiful Christmas 🎄❤️', author: 'imwinter', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg' }, // 特例：winter
+      { id: 'ex_v9', src: 'assets/videos/karina_video_snowdance.mp4', caption: 'Snow dance ❄️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v10', src: 'assets/videos/karina_video_aegwoo.mp4', caption: 'Aegwoo moment 💙', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v11', src: 'assets/videos/karinagiselle_video_channel.mp4', caption: 'Backstage hello 👭', author: 'aerichandesu', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png' }, // 特例：giselle
+      { id: 'ex_v12', src: 'assets/videos/karina_video_everyday.mp4', caption: 'Everyday mood 🤍', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v13', src: 'assets/videos/karina_video_serenade.mp4', caption: 'Serenade 🎶', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v14', src: 'assets/videos/karina_video_taeyong.mp4', caption: 'Taeyong x Karina 🕺', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v15', src: 'assets/videos/karina_video_tox.mp4', caption: 'Tox 🕶️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v16', src: 'assets/videos/karinagiselle_video_dance.mp4', caption: 'Dance duo 👯‍♀️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' }
     ].map(item => ({
       ...item,
       type: 'video',
-      author: 'aespa_official',
-      avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg',
       likes: Math.floor(Math.random() * 200000) + 380000,
       likeUser: 'imwinter'
     }));
@@ -1150,6 +1127,14 @@
       }
     }
 
+    // 格式化讚數文字：私密帳號小於 1000 顯示純數字，公開帳號顯示萬/M
+    function formatLikesText(item) {
+      if (item.author === 'karina0411') {
+        return `${item.likeUser} 和其他 ${item.likes} 人都說讚`;
+      }
+      return `${item.likeUser} 和其他 ${(item.likes/10000).toFixed(1)} 萬人都說讚`;
+    }
+
     function buildPostCardHTML(item, prefix) {
       const uniqueId = `${prefix}_${item.id}`;
       return `
@@ -1179,7 +1164,7 @@
           </div>
           <div class="feed-btns">
             <div class="feed-btns-left">
-              <span id="heart_${uniqueId}" onclick="toggleHeart('${uniqueId}', ${item.likes}, '${item.likeUser}')">
+              <span id="heart_${uniqueId}" onclick="toggleHeart('${uniqueId}', ${item.likes}, '${item.likeUser}', '${item.author}')">
                 <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
               </span>
               <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -1187,7 +1172,7 @@
             </div>
             <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </div>
-          <div class="feed-likes-text" id="likes_${uniqueId}">${item.likeUser} 和其他 ${(item.likes/10000).toFixed(1)} 萬人都說讚</div>
+          <div class="feed-likes-text" id="likes_${uniqueId}">${formatLikesText(item)}</div>
           <div class="feed-caption">
             <span class="author-name">${item.author || 'karina0411'}</span>
             <span id="caption_${uniqueId}">${item.caption}</span>
@@ -1229,7 +1214,7 @@
         stream.insertAdjacentHTML('beforeend', buildPostCardHTML(post, 'pr'));
       });
 
-      // --- 2. 搜尋 / 探索頁面 (放大鏡 🔍：17部純影片九宮格，發文者統一為 aespa_official) ---
+      // --- 2. 搜尋 / 探索頁面 (放大鏡 🔍：16部純影片九宮格，發文者統一為 aespa_official，特例除外) ---
       exploreItems.forEach(item => {
         const cell = document.createElement('div');
         cell.className = 'grid-cell';
@@ -1284,7 +1269,7 @@
       setupSwipeGestures();
     }
 
-    // 只有正中央的 1 部影片能播放，滑走即停
+    // 只有 1 部在正中央的影片能播放，滑走即停
     function setupVideoAutoPlayObserver() {
       if (videoObserver) videoObserver.disconnect();
       videoObserver = new IntersectionObserver((entries) => {
@@ -1379,6 +1364,7 @@
 
         if (Math.abs(deltaY) < 60) {
           if (deltaX > 70) {
+            // 向右滑返回
             if (document.getElementById('pagePostStream').classList.contains('active')) {
               navTo('pageProfile');
             } else if (document.getElementById('chatRoom').classList.contains('active')) {
@@ -1387,6 +1373,7 @@
               navTo('pageFeed');
             }
           } else if (deltaX < -70) {
+            // 向左滑
             if (document.getElementById('pageFeed').classList.contains('active')) {
               navTo('pageMessages');
             }
@@ -1441,7 +1428,7 @@
       }, 60);
     }
 
-    function toggleHeart(uniqueId, baseLikes, user) {
+    function toggleHeart(uniqueId, baseLikes, user, author) {
       const heart = document.getElementById(`heart_${uniqueId}`);
       const text = document.getElementById(`likes_${uniqueId}`);
       const isLiked = heart.dataset.liked === 'true';
@@ -1449,11 +1436,19 @@
       if (!isLiked) {
         heart.innerHTML = `<svg width="24" height="24" fill="#ff3040" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
         heart.dataset.liked = 'true';
-        text.innerText = `你、${user} 和其他 ${(baseLikes/10000).toFixed(1)} 萬人都說讚`;
+        if (author === 'karina0411') {
+          text.innerText = `你、${user} 和其他 ${baseLikes} 人都說讚`;
+        } else {
+          text.innerText = `你、${user} 和其他 ${(baseLikes/10000).toFixed(1)} 萬人都說讚`;
+        }
       } else {
         heart.innerHTML = `<svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
         heart.dataset.liked = 'false';
-        text.innerText = `${user} 和其他 ${(baseLikes/10000).toFixed(1)} 萬人都說讚`;
+        if (author === 'karina0411') {
+          text.innerText = `${user} 和其他 ${baseLikes} 人都說讚`;
+        } else {
+          text.innerText = `${user} 和其他 ${(baseLikes/10000).toFixed(1)} 萬人都說讚`;
+        }
       }
     }
 
@@ -1557,35 +1552,37 @@
       document.getElementById('storyPlayer').classList.remove('active');
     }
 
-    // --- 聊天室劇本與自動回覆設定 ---
+    // --- 訊息對話劇本 (自然隨興、無標點符號、自動送出與回覆) ---
     const chatScenarios = {
       winter: {
         partner: 'imwinter',
         avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg',
-        initial: '我剛滑 Reels 看到超多可愛的狗狗衣服，忍不住買了一大堆回來！等等妳回房間幫我一起讓波妞穿看看好不好？',
-        replies: ['好啊，等等回宿舍幫妳一起抓著牠穿', '買了幾件啊？波妞又要無奈了', '哈哈好，我等等回房幫妳！'],
-        autoResponse: '太好了！我先幫波妞準備零食，等等房裡見～'
+        initial: '剛滑Reels看到好多可愛的狗衣服 忍不住買一堆回來 等等回房幫我一起讓波妞穿穿看',
+        autoReplyUser: '買幾件啊 波妞又要眼神死了吧哈哈哈',
+        autoResponse: '買了五件 我先準備肉泥零食 等等回房見'
       },
       ningning: {
         partner: 'imnotningning',
         avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8043.jpeg',
-        initial: '想問妳之前在海底撈買的那個潤喉糖是在哪裡網購的？我也想買幾包放在包包裡。',
-        replies: ['不用買啦，我買超多吃不完，我直接拿兩包給妳就好了', '我買了一大箱，等等分兩包給妳！', '我這裡還有很多，等下拿去給妳！'],
-        autoResponse: '哇太好了！謝謝～省得我再去網購找半天！'
+        initial: '問妳上次海底撈那個潤喉糖是在哪網購的我也想買',
+        autoReplyUser: '不用買 我買超多吃不完 直接拿兩包給妳',
+        autoResponse: '太讚了 謝謝愛妳 省得我找老半天'
       },
       giselle: {
         partner: 'aerichandesu',
         avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png',
-        initial: '上次巡演在街角一起吃的那家塔可餅真的好好吃，想起來又想吃了，約定好下次休假一定要再一起去吃！',
-        replies: ['好啊！那家真的超好吃，下次排休一定要去', '沒問題，下次休假第一站就去吃塔可餅！', '一定要去，我已經在想那個醬汁了！'],
-        autoResponse: '約定好囉！下次排假我們就衝去吃～'
+        initial: '上次巡迴在街角吃的那家塔可餅真的好好吃 想起來又想吃了 下次休假一定要再去',
+        autoReplyUser: '好啊 那家醬汁超頂 下次排休第一站就去吃',
+        autoResponse: '約好了 為了塔可餅我要認真排假'
       }
     };
 
     let currentChatKey = '';
+    let hasChatReplied = false;
 
     function openChat(username, avatarSrc, scenarioKey) {
       currentChatKey = scenarioKey;
+      hasChatReplied = false;
       const data = chatScenarios[scenarioKey];
       document.getElementById('chatHeaderName').innerText = data.partner;
       document.getElementById('chatHeaderImg').src = data.avatar;
@@ -1593,17 +1590,7 @@
       const flow = document.getElementById('chatMessageFlow');
       flow.innerHTML = `<div class="bubble received">${data.initial}</div>`;
 
-      // 產生快捷回覆按鈕
-      const tray = document.getElementById('quickRepliesTray');
-      tray.innerHTML = '';
-      data.replies.forEach(text => {
-        const chip = document.createElement('div');
-        chip.className = 'quick-reply-chip';
-        chip.innerText = text;
-        chip.onclick = () => sendChatMessageText(text);
-        tray.appendChild(chip);
-      });
-
+      document.getElementById('chatInputText').value = '';
       document.getElementById('chatRoom').classList.add('active');
     }
 
@@ -1611,33 +1598,32 @@
       document.getElementById('chatRoom').classList.remove('active');
     }
 
-    function sendChatMessageText(text) {
+    // 點擊發送或輸入框時，系統自動發出指定隨興對話
+    function handleAutoChat() {
+      if (hasChatReplied) return;
+      const data = chatScenarios[currentChatKey];
+      if (!data) return;
+
+      hasChatReplied = true;
       const flow = document.getElementById('chatMessageFlow');
+      const input = document.getElementById('chatInputText');
+      input.value = '';
+
+      // 使用者自動送出
       const sentBubble = document.createElement('div');
       sentBubble.className = 'bubble sent';
-      sentBubble.innerText = text;
+      sentBubble.innerText = data.autoReplyUser;
       flow.appendChild(sentBubble);
       flow.scrollTop = flow.scrollHeight;
 
-      // 自動回覆劇情
+      // 對方隨後自然回覆
       setTimeout(() => {
-        const data = chatScenarios[currentChatKey];
-        if (data) {
-          const reply = document.createElement('div');
-          reply.className = 'bubble received';
-          reply.innerText = data.autoResponse;
-          flow.appendChild(reply);
-          flow.scrollTop = flow.scrollHeight;
-        }
-      }, 800);
-    }
-
-    function sendChatMessage() {
-      const input = document.getElementById('chatInputText');
-      const val = input.value.trim();
-      if (!val) return;
-      input.value = '';
-      sendChatMessageText(val);
+        const reply = document.createElement('div');
+        reply.className = 'bubble received';
+        reply.innerText = data.autoResponse;
+        flow.appendChild(reply);
+        flow.scrollTop = flow.scrollHeight;
+      }, 700);
     }
 
     initApp();
