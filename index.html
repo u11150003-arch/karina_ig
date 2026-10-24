@@ -312,7 +312,7 @@
     }
     .grid-tab.active { opacity: 1; border-bottom: 1px solid #fff; }
 
-    /* 九宮格 */
+    /* 九宮格 (通用) */
     .photo-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -688,7 +688,7 @@
     <!-- 主滾動視圖 -->
     <main class="viewport">
 
-      <!-- 1. 首頁 (Home Feed) -->
+      <!-- 1. 首頁 (Home Feed / 房屋 🏠：保留原照片貼文，並均勻加入 6 部生活短片) -->
       <section id="pageFeed" class="page">
         <div class="stories-tray">
           <div class="story-node" onclick="startStoryGroup(0)">
@@ -708,126 +708,9 @@
         <div id="homeFeedList"></div>
       </section>
 
-      <!-- 2. 連續短片 Reels -->
+      <!-- 2. 連續短片區 (Reels ▷：配置 9 部精選高畫質短影音) -->
       <section id="pageReels" class="page">
-        <div class="reels-scroll-area" id="reelsContainer">
-
-          <!-- Reel 1 -->
-          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reelVid1'), 'badge_r1', 'sound_icon_r1')">
-            <video class="reel-video" id="reelVid1" src="%40aespa_official%20-%20R%E2%A4%93Download.mov#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
-            <div class="sound-badge-indicator" id="badge_r1">
-              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
-            </div>
-            <div class="reel-side-controls" onclick="event.stopPropagation()">
-              <div class="reel-action-btn" onclick="toggleReelHeart('rh1', 'rc1', 331000)">
-                <span id="rh1"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
-                <span id="rc1">33.1萬</span>
-              </div>
-              <div class="reel-action-btn">
-                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                <span>1,208</span>
-              </div>
-              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reelVid1'), 'badge_r1', 'sound_icon_r1')">
-                <div class="sound-btn-circle" id="sound_icon_r1">
-                  <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Reel 2 -->
-          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reelVid2'), 'badge_r2', 'sound_icon_r2')">
-            <video class="reel-video" id="reelVid2" src="ScreenRecording_09-04-2026%2001-12-51_1.mov#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
-            <div class="sound-badge-indicator" id="badge_r2">
-              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
-            </div>
-            <div class="reel-side-controls" onclick="event.stopPropagation()">
-              <div class="reel-action-btn" onclick="toggleReelHeart('rh2', 'rc2', 452000)">
-                <span id="rh2"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
-                <span id="rc2">45.2萬</span>
-              </div>
-              <div class="reel-action-btn">
-                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                <span>2,190</span>
-              </div>
-              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reelVid2'), 'badge_r2', 'sound_icon_r2')">
-                <div class="sound-btn-circle" id="sound_icon_r2">
-                  <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Reel 3 -->
-          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reelVid3'), 'badge_r3', 'sound_icon_r3')">
-            <video class="reel-video" id="reelVid3" src="Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
-            <div class="sound-badge-indicator" id="badge_r3">
-              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
-            </div>
-            <div class="reel-side-controls" onclick="event.stopPropagation()">
-              <div class="reel-action-btn" onclick="toggleReelHeart('rh3', 'rc3', 298000)">
-                <span id="rh3"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
-                <span id="rc3">29.8萬</span>
-              </div>
-              <div class="reel-action-btn">
-                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                <span>978</span>
-              </div>
-              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reelVid3'), 'badge_r3', 'sound_icon_r3')">
-                <div class="sound-btn-circle" id="sound_icon_r3">
-                  <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Reel 4 -->
-          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reelVid4'), 'badge_r4', 'sound_icon_r4')">
-            <video class="reel-video" id="reelVid4" src="A8D77C74-2C63-4E2C-A9DE-429EFC12F127.mov#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
-            <div class="sound-badge-indicator" id="badge_r4">
-              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
-            </div>
-            <div class="reel-side-controls" onclick="event.stopPropagation()">
-              <div class="reel-action-btn" onclick="toggleReelHeart('rh4', 'rc4', 510000)">
-                <span id="rh4"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
-                <span id="rc4">51.0萬</span>
-              </div>
-              <div class="reel-action-btn">
-                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                <span>3,421</span>
-              </div>
-              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reelVid4'), 'badge_r4', 'sound_icon_r4')">
-                <div class="sound-btn-circle" id="sound_icon_r4">
-                  <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Reel 5 -->
-          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reelVid5'), 'badge_r5', 'sound_icon_r5')">
-            <video class="reel-video" id="reelVid5" src="gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
-            <div class="sound-badge-indicator" id="badge_r5">
-              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
-            </div>
-            <div class="reel-side-controls" onclick="event.stopPropagation()">
-              <div class="reel-action-btn" onclick="toggleReelHeart('rh5', 'rc5', 637000)">
-                <span id="rh5"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
-                <span id="rc5">63.7萬</span>
-              </div>
-              <div class="reel-action-btn">
-                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                <span>4,810</span>
-              </div>
-              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reelVid5'), 'badge_r5', 'sound_icon_r5')">
-                <div class="sound-btn-circle" id="sound_icon_r5">
-                  <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
+        <div class="reels-scroll-area" id="reelsContainer"></div>
       </section>
 
       <!-- 3. 訊息 Direct (最中間) -->
@@ -872,7 +755,7 @@
         </div>
       </section>
 
-      <!-- 4. 探索 Discover -->
+      <!-- 4. 探索 Discover (放大鏡 🔍：移除原本照片，全版改為純影片多格瀑布流) -->
       <section id="pageExplore" class="page">
         <div style="padding: 10px 14px;">
           <input type="text" placeholder="搜尋" style="width:100%; background:#262626; border:none; border-radius:8px; padding:8px 12px; color:#fff; font-size:14px; outline:none;" />
@@ -880,7 +763,7 @@
         <div class="photo-grid" id="exploreGridList"></div>
       </section>
 
-      <!-- 5. 個人主頁 Profile (預設開啟) -->
+      <!-- 5. 個人主頁 Profile (預設開啟：保留原照片與專屬影片) -->
       <section id="pageProfile" class="page active">
         <div class="profile-info">
           <div class="profile-row">
@@ -888,7 +771,7 @@
               <img src="IMG_4810.jpeg" alt="karina0411 avatar" />
             </div>
             <div class="profile-stats-group">
-              <div class="stat-box"><div class="count">14</div><div class="desc">貼文</div></div>
+              <div class="stat-box"><div class="count">15</div><div class="desc">貼文</div></div>
               <div class="stat-box"><div class="count">2,480萬</div><div class="desc">粉絲</div></div>
               <div class="stat-box" onclick="openFollowingSheet()"><div class="count">6</div><div class="desc">追蹤中</div></div>
             </div>
@@ -956,7 +839,7 @@
       </div>
     </nav>
 
-    <!-- 抽屜 1：6 位真實 Instagram 追蹤者 (直接載入 KARINA-iphone 倉庫完整路徑) -->
+    <!-- 抽屜 1：6 位真實 Instagram 追蹤者 (直接引用 KARINA-iphone 倉庫真實路徑) -->
     <div id="followingSheet" class="sheet-modal">
       <div class="sheet-content">
         <div class="sheet-header">
@@ -965,7 +848,6 @@
         </div>
         <div style="padding: 12px 16px;">
           
-          <!-- 1. aespa_official：IMG_4675.jpeg -->
           <a href="https://www.instagram.com/aespa_official" target="_blank" class="following-user-row">
             <div style="display:flex; align-items:center; gap:12px;">
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg" onerror="this.src='IMG_4675.jpeg'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
@@ -979,7 +861,6 @@
             <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
           </a>
 
-          <!-- 2. katarinabluu：IMG_6344.jpeg -->
           <a href="https://www.instagram.com/katarinabluu" target="_blank" class="following-user-row">
             <div style="display:flex; align-items:center; gap:12px;">
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_6344.jpeg" onerror="this.src='IMG_6344.jpeg'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
@@ -993,7 +874,6 @@
             <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
           </a>
 
-          <!-- 3. imwinter：IMG_7077.jpeg -->
           <a href="https://www.instagram.com/imwinter" target="_blank" class="following-user-row">
             <div style="display:flex; align-items:center; gap:12px;">
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg" onerror="this.src='IMG_7077.jpeg'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
@@ -1007,7 +887,6 @@
             <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
           </a>
 
-          <!-- 4. aerichandesu：IMG_8042.png -->
           <a href="https://www.instagram.com/aerichandesu" target="_blank" class="following-user-row">
             <div style="display:flex; align-items:center; gap:12px;">
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png" onerror="this.src='IMG_8042.png'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
@@ -1021,7 +900,6 @@
             <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
           </a>
 
-          <!-- 5. imnotningning：IMG_8043.jpeg -->
           <a href="https://www.instagram.com/imnotningning" target="_blank" class="following-user-row">
             <div style="display:flex; align-items:center; gap:12px;">
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8043.jpeg" onerror="this.src='IMG_8043.jpeg'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
@@ -1035,7 +913,6 @@
             <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
           </a>
 
-          <!-- 6. pponyoim：0A7A880B-1FCE-4D46-AF09-A87C88F0B8C4.jpeg -->
           <a href="https://www.instagram.com/pponyoim" target="_blank" class="following-user-row">
             <div style="display:flex; align-items:center; gap:12px;">
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/0A7A880B-1FCE-4D46-AF09-A87C88F0B8C4.jpeg" onerror="this.src='0A7A880B-1FCE-4D46-AF09-A87C88F0B8C4.jpeg'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
@@ -1120,7 +997,8 @@
   </div>
 
   <script>
-    const postsData = [
+    // 1. 首頁/主頁原有的 9 張經典照片資料
+    const basePhotos = [
       { id: 'p1', type: 'image', src: '%E4%BF%AEkarina%20(328).jpeg', caption: '나의 온 세상이 너라는 파랑으로 물든 날 💙', likes: 457000, likeUser: 'imwinter' },
       { id: 'p2', type: 'image', src: 'IMG_2050.jpeg', caption: 'Tokyo night walk 🌃', likes: 382000, likeUser: 'katarinabluu' },
       { id: 'p3', type: 'image', src: '%E2%9C%85%E4%BF%AE7N9A0205.jpeg', caption: '👾🛸💚', likes: 513000, likeUser: 'aerichandesu' },
@@ -1129,12 +1007,63 @@
       { id: 'p6', type: 'image', src: 'IMG_1156.jpeg', caption: '셀카 ✨', likes: 392000, likeUser: 'pponyoim' },
       { id: 'p7', type: 'image', src: 'IMG_5039.png', caption: 'Sunny day 🌸', likes: 471000, likeUser: 'imwinter' },
       { id: 'p8', type: 'image', src: 'IMG_6993.jpeg', caption: '눈사람 ☃️❄️', likes: 521000, likeUser: 'katarinabluu' },
-      { id: 'p9', type: 'image', src: 'IMG_4810.jpeg', caption: '겨울 ❄️💙', likes: 550000, likeUser: 'aerichandesu' },
-      { id: 'p10', type: 'video', src: '%40aespa_official%20-%20R%E2%A4%93Download.mov#t=0.001', rawSrc: '%40aespa_official%20-%20R%E2%A4%93Download.mov', caption: 'Dance break 🎵', likes: 331000, likeUser: 'imwinter' },
-      { id: 'p11', type: 'video', src: 'ScreenRecording_09-04-2026%2001-12-51_1.mov#t=0.001', rawSrc: 'ScreenRecording_09-04-2026%2001-12-51_1.mov', caption: 'Behind moments 🎬', likes: 452000, likeUser: 'aespa_official' },
-      { id: 'p12', type: 'video', src: 'Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4#t=0.001', rawSrc: 'Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4', caption: 'Practice time 💫', likes: 298000, likeUser: 'imnotningning' },
-      { id: 'p13', type: 'video', src: 'A8D77C74-2C63-4E2C-A9DE-429EFC12F127.mov#t=0.001', rawSrc: 'A8D77C74-2C63-4E2C-A9DE-429EFC12F127.mov', caption: 'Vibes 🖤', likes: 510000, likeUser: 'katarinabluu' },
-      { id: 'p14', type: 'video', src: 'gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4#t=0.001', rawSrc: 'gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4', caption: 'Encore stage ✨', likes: 637000, likeUser: 'imwinter' }
+      { id: 'p9', type: 'image', src: 'IMG_4810.jpeg', caption: '겨울 ❄️💙', likes: 550000, likeUser: 'aerichandesu' }
+    ];
+
+    // 2. 來自試算表統整的 39 部影片清單（路徑均指向 assets/videos/）
+    // (A) 搜尋區專屬 (18部純影片)
+    const exploreVideos = [
+      { id: 'ex1', file: 'karina_video_betterthings.mp4', desc: 'Better Things 打歌推廣 🫧', likes: 312000, likeUser: 'imwinter' },
+      { id: 'ex2', file: 'karina_video_guilty.mp4', desc: 'Guilty 編舞挑戰 🖤', likes: 495000, likeUser: 'katarinabluu' },
+      { id: 'ex3', file: 'karina_video_illit.mp4', desc: '雙人同框互動合作 💫', likes: 388000, likeUser: 'aespa_official' },
+      { id: 'ex4', file: 'karina_video_lemonade.mp4', desc: 'Lemonade 夏日清爽編舞 🍋', likes: 421000, likeUser: 'imnotningning' },
+      { id: 'ex5', file: 'karina_video_getaguitar.mp4', desc: 'Get A Guitar 吉他手勢挑戰 🎸', likes: 350000, likeUser: 'aerichandesu' },
+      { id: 'ex6', file: 'karina_video_overdrive.mp4', desc: 'Overdrive 強勁節奏 ⚡', likes: 367000, likeUser: 'imwinter' },
+      { id: 'ex7', file: 'karina_video_lesserafim.mp4', desc: '跨團同框合舞挑戰 ✨', likes: 489000, likeUser: 'katarinabluu' },
+      { id: 'ex8', file: 'karina_video_cold.mp4', desc: '冬日保暖休閒隨拍 ❄️', likes: 334000, likeUser: 'aerichandesu' },
+      { id: 'ex9', file: 'karina_video_daijobo.mp4', desc: '日語趣味對嘴賣萌 🌸', likes: 412000, likeUser: 'pponyoim' },
+      { id: 'ex10', file: 'karina_video_everyday.mp4', desc: '日常休閒生活隨拍 🤍', likes: 379000, likeUser: 'imnotningning' },
+      { id: 'ex11', file: 'karina_video_japan.mp4', desc: '日本巡演拍攝街頭花絮 🗼', likes: 442000, likeUser: 'aespa_official' },
+      { id: 'ex12', file: 'karina_video_lemontang.mp4', desc: '酸甜活力清爽日常 🍹', likes: 295000, likeUser: 'imwinter' },
+      { id: 'ex13', file: 'karina_video_pricetag.mp4', desc: 'Price Tag 輕快節奏律動 🏷️', likes: 385000, likeUser: 'katarinabluu' },
+      { id: 'ex14', file: 'karina_video_romance.mp4', desc: '柔和濾鏡浪漫氛圍 🩰', likes: 512000, likeUser: 'aerichandesu' },
+      { id: 'ex15', file: 'karina_video_scarfvlog.mp4', desc: '圍巾戶外行走自拍 Vlog 🧣', likes: 467000, likeUser: 'imnotningning' },
+      { id: 'ex16', file: 'karina_video_serenade.mp4', desc: 'Serenade 雙人伴奏合唱 🎶', likes: 399000, likeUser: 'aespa_official' },
+      { id: 'ex17', file: 'karina_video_shoes.mp4', desc: '鞋款細節時尚穿搭 👟', likes: 341000, likeUser: 'pponyoim' },
+      { id: 'ex18', file: 'karina_video_tamagotchi.mp4', desc: '復古像素趣味短片 👾', likes: 428000, likeUser: 'imwinter' }
+    ];
+
+    // (B) 連續短片區 (9部直式精選 Reels)
+    const reelsVideos = [
+      { id: 'rl1', file: 'karina_video_aegwoo.mp4', desc: '撒嬌可愛表情近距離問候 💙', likes: 521000, comments: 3420 },
+      { id: 'rl2', file: 'karina_video_catch.mp4', desc: '抓鏡頭互動俏皮特寫 🎀', likes: 468000, comments: 2890 },
+      { id: 'rl3', file: 'karina_video_chase.mp4', desc: '律動感強烈舞蹈動作 💫', likes: 493000, comments: 3110 },
+      { id: 'rl4', file: 'karina_video_firstsnow.mp4', desc: '初雪季節應景氛圍 ❄️☃️', likes: 589000, comments: 4560 },
+      { id: 'rl5', file: 'karina_video_genie.mp4', desc: '經典編舞致敬挑戰 ✨', likes: 452000, comments: 2780 },
+      { id: 'rl6', file: 'karina_video_mountain.mp4', desc: '戶外山景遠景拍攝行程 ⛰️', likes: 418000, comments: 2190 },
+      { id: 'rl7', file: 'karina_video_richman.mp4', desc: '後台曲目律動花絮 🎧', likes: 477000, comments: 3050 },
+      { id: 'rl8', file: 'karina_video_snowdance.mp4', desc: '雪地氛圍感舞蹈短片 🤍', likes: 532000, comments: 3870 },
+      { id: 'rl9', file: 'karina_video_taeyong.mp4', desc: '合作打歌舞蹈挑戰 🕺💃', likes: 615000, comments: 5120 }
+    ];
+
+    // (C) 首頁動態區 (6部生活隨拍)
+    const feedVideos = [
+      { id: 'fv1', file: 'karina_video_beautifulchristmas.mp4', caption: 'Beautiful Christmas 聖誕合作 🎄', likes: 432000, likeUser: 'imwinter' },
+      { id: 'fv2', file: 'karina_video_blowflower.mp4', caption: '微風與吹花瓣自然特寫 🌸', likes: 389000, likeUser: 'katarinabluu' },
+      { id: 'fv3', file: 'karina_video_bowl.mp4', caption: '趣味小互動 🥣', likes: 325000, likeUser: 'aerichandesu' },
+      { id: 'fv4', file: 'karina_video_christmas.mp4', caption: '聖誕造型隊友同框直播 🎅', likes: 478000, likeUser: 'aespa_official' },
+      { id: 'fv5', file: 'karina_video_snow_vlog.mp4', caption: '冬季雪景日常 Vlog ❄️', likes: 541000, likeUser: 'imnotningning' },
+      { id: 'fv6', file: 'karina_video_vlog.mp4', caption: '巡迴飯店休息時差調適 Vlog 🌙', likes: 412000, likeUser: 'pponyoim' }
+    ];
+
+    // (D) 個人主頁區 (6部雙人與花絮影片)
+    const profileVideos = [
+      { id: 'pv1', file: 'karinagiselle_video_channel.mp4', caption: 'Karina & Giselle 頻道問候花絮 👭', likes: 465000, likeUser: 'aerichandesu' },
+      { id: 'pv2', file: 'karinagiselle_video_dance.mp4', caption: 'Karina & Giselle 雙人編舞挑戰 👯‍♀️', likes: 510000, likeUser: 'imwinter' },
+      { id: 'pv3', file: 'karinagiselle_video_flirt.mp4', caption: 'Karina & Giselle 調皮對鏡互動 💖', likes: 538000, likeUser: 'katarinabluu' },
+      { id: 'pv4', file: 'karinagiselle_video_hajima.mp4', caption: 'Karina & Giselle 俏皮對話日常 😆', likes: 482000, likeUser: 'imnotningning' },
+      { id: 'pv5', file: 'karina_video_tox.mp4', caption: '帥氣風格街頭隨拍 🕶️', likes: 395000, likeUser: 'aespa_official' },
+      { id: 'pv6', file: 'karina_video_twoofheart.mp4', caption: '愛心雙人甜蜜手勢 💕', likes: 567000, likeUser: 'pponyoim' }
     ];
 
     let videoObserver = null;
@@ -1157,13 +1086,125 @@
       const stream = document.getElementById('streamFeedList');
       const homeFeed = document.getElementById('homeFeedList');
       const explore = document.getElementById('exploreGridList');
+      const reelsContainer = document.getElementById('reelsContainer');
 
       grid.innerHTML = '';
       stream.innerHTML = '';
       homeFeed.innerHTML = '';
       explore.innerHTML = '';
+      reelsContainer.innerHTML = '';
 
-      postsData.forEach((post, index) => {
+      // --- 1. 渲染首頁 (房屋 🏠：9張原有照片 + 6部首頁影片) ---
+      const combinedHome = [...basePhotos];
+      feedVideos.forEach((fv, i) => {
+        combinedHome.splice((i * 2) + 1, 0, {
+          id: fv.id,
+          type: 'video',
+          src: `assets/videos/${fv.file}`,
+          caption: fv.caption,
+          likes: fv.likes,
+          likeUser: fv.likeUser
+        });
+      });
+
+      combinedHome.forEach(item => {
+        const cardHTML = `
+          <article class="feed-item" id="feed_${item.id}">
+            <div class="feed-user">
+              <div class="feed-user-meta">
+                <img class="avatar-mini" src="IMG_4810.jpeg" />
+                <span>karina0411</span>
+              </div>
+              <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+            </div>
+            <div class="feed-photo-container" ${item.type === 'video' ? `onclick="toggleVideoSound(document.getElementById('vid_${item.id}'), 'badge_${item.id}', 'btn_mute_${item.id}')"` : ''}>
+              ${item.type === 'video' 
+                ? `
+                  <video class="stream-video" id="vid_${item.id}" src="${item.src}" preload="auto" loop muted playsinline webkit-playsinline></video>
+                  <div class="sound-badge-indicator" id="badge_${item.id}">
+                    <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
+                  </div>
+                  <div class="mute-toggle-btn" id="btn_mute_${item.id}" onclick="event.stopPropagation(); toggleVideoSound(document.getElementById('vid_${item.id}'), 'badge_${item.id}', 'btn_mute_${item.id}')">
+                    <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                  </div>
+                `
+                : `<img src="${item.src}" />`
+              }
+            </div>
+            <div class="feed-btns">
+              <div class="feed-btns-left">
+                <span id="heart_${item.id}" onclick="toggleHeart('${item.id}', ${item.likes}, '${item.likeUser}')">
+                  <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </span>
+                <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </div>
+              <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="feed-likes-text" id="likes_${item.id}">${item.likeUser} 和其他 ${(item.likes/10000).toFixed(1)} 萬人都說讚</div>
+            <div class="feed-caption"><span>karina0411</span>${item.caption}</div>
+          </article>
+        `;
+        homeFeed.insertAdjacentHTML('beforeend', cardHTML);
+      });
+
+      // --- 2. 渲染搜尋區 (放大鏡 🔍：移除原本照片，18 部純影片九宮格) ---
+      exploreVideos.forEach(v => {
+        const cell = document.createElement('div');
+        cell.className = 'grid-cell';
+        cell.onclick = () => {
+          navTo('pageReels');
+        };
+        cell.innerHTML = `
+          <svg class="video-corner-badge" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <video src="assets/videos/${v.file}#t=0.001" preload="auto" muted playsinline></video>
+        `;
+        explore.appendChild(cell);
+      });
+
+      // --- 3. 渲染連續短片區 (Reels ▷：9 部直式專屬短片) ---
+      reelsVideos.forEach((r, idx) => {
+        const reelHTML = `
+          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reel_v_${r.id}'), 'badge_r_${r.id}', 'btn_sound_r_${r.id}')">
+            <video class="reel-video" id="reel_v_${r.id}" src="assets/videos/${r.file}#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
+            <div class="sound-badge-indicator" id="badge_r_${r.id}">
+              <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
+            </div>
+            <div class="reel-side-controls" onclick="event.stopPropagation()">
+              <div class="reel-action-btn" onclick="toggleReelHeart('rh_${r.id}', 'rc_${r.id}', ${r.likes})">
+                <span id="rh_${r.id}"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+                <span id="rc_${r.id}">${(r.likes/10000).toFixed(1)}萬</span>
+              </div>
+              <div class="reel-action-btn">
+                <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span>${r.comments}</span>
+              </div>
+              <div class="reel-action-btn" onclick="toggleVideoSound(document.getElementById('reel_v_${r.id}'), 'badge_r_${r.id}', 'btn_sound_r_${r.id}')">
+                <div class="sound-btn-circle" id="btn_sound_r_${r.id}">
+                  <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        reelsContainer.insertAdjacentHTML('beforeend', reelHTML);
+      });
+
+      // --- 4. 渲染個人主頁 (9張原有照片 + 6部主頁雙人影片，共15則貼文) ---
+      const combinedProfile = [
+        ...basePhotos,
+        ...profileVideos.map(pv => ({
+          id: pv.id,
+          type: 'video',
+          src: `assets/videos/${pv.file}`,
+          caption: pv.caption,
+          likes: pv.likes,
+          likeUser: pv.likeUser
+        }))
+      ];
+
+      combinedProfile.forEach(post => {
+        // 主頁九宮格 Cell
         const cell = document.createElement('div');
         cell.className = 'grid-cell';
         cell.onclick = () => openPostStreamAt(post.id);
@@ -1171,17 +1212,14 @@
         if (post.type === 'video') {
           cell.innerHTML = `
             <svg class="video-corner-badge" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            <video src="${post.src}" preload="auto" muted playsinline></video>
+            <video src="${post.src}#t=0.001" preload="auto" muted playsinline></video>
           `;
         } else {
           cell.innerHTML = `<img src="${post.src}" />`;
         }
         grid.appendChild(cell);
 
-        const expCell = cell.cloneNode(true);
-        expCell.onclick = () => openPostStreamAt(post.id);
-        explore.appendChild(expCell);
-
+        // 主頁串流檢視卡片
         const cardHTML = `
           <article class="feed-item" id="stream_${post.id}">
             <div class="feed-user">
@@ -1191,14 +1229,14 @@
               </div>
               <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
             </div>
-            <div class="feed-photo-container" ${post.type === 'video' ? `onclick="toggleVideoSound(document.getElementById('vid_${post.id}'), 'badge_f_${post.id}', 'btn_mute_${post.id}')"` : ''}>
+            <div class="feed-photo-container" ${post.type === 'video' ? `onclick="toggleVideoSound(document.getElementById('stream_v_${post.id}'), 'badge_s_${post.id}', 'btn_mute_s_${post.id}')"` : ''}>
               ${post.type === 'video' 
                 ? `
-                  <video class="stream-video" id="vid_${post.id}" src="${post.rawSrc}" preload="auto" loop muted playsinline webkit-playsinline></video>
-                  <div class="sound-badge-indicator" id="badge_f_${post.id}">
+                  <video class="stream-video" id="stream_v_${post.id}" src="${post.src}" preload="auto" loop muted playsinline webkit-playsinline></video>
+                  <div class="sound-badge-indicator" id="badge_s_${post.id}">
                     <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
                   </div>
-                  <div class="mute-toggle-btn" id="btn_mute_${post.id}" onclick="event.stopPropagation(); toggleVideoSound(document.getElementById('vid_${post.id}'), 'badge_f_${post.id}', 'btn_mute_${post.id}')">
+                  <div class="mute-toggle-btn" id="btn_mute_s_${post.id}" onclick="event.stopPropagation(); toggleVideoSound(document.getElementById('stream_v_${post.id}'), 'badge_s_${post.id}', 'btn_mute_s_${post.id}')">
                     <svg width="16" height="16" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
                   </div>
                 `
@@ -1207,7 +1245,7 @@
             </div>
             <div class="feed-btns">
               <div class="feed-btns-left">
-                <span id="heart_${post.id}" onclick="toggleHeart('${post.id}', ${post.likes}, '${post.likeUser}')">
+                <span id="heart_s_${post.id}" onclick="toggleHeart('s_${post.id}', ${post.likes}, '${post.likeUser}')">
                   <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 </span>
                 <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -1215,12 +1253,11 @@
               </div>
               <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </div>
-            <div class="feed-likes-text" id="likes_${post.id}">${post.likeUser} 和其他 ${(post.likes/10000).toFixed(1)} 萬人都說讚</div>
+            <div class="feed-likes-text" id="likes_s_${post.id}">${post.likeUser} 和其他 ${(post.likes/10000).toFixed(1)} 萬人都說讚</div>
             <div class="feed-caption"><span>karina0411</span>${post.caption}</div>
           </article>
         `;
         stream.insertAdjacentHTML('beforeend', cardHTML);
-        if (index < 6) homeFeed.insertAdjacentHTML('beforeend', cardHTML);
       });
 
       setupVideoAutoPlayObserver();
