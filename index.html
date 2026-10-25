@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
@@ -90,7 +90,7 @@
       align-items: center;
     }
 
-    /* 頂部彈出式推播通知橫幅 */
+    /* 頂部浮動推播通知橫幅 */
     .in-app-notification {
       position: fixed;
       top: calc(12px + env(safe-area-inset-top, 0px));
@@ -183,7 +183,7 @@
       border: 2px solid #000;
     }
 
-    /* 貼文 (Feed Card)：調整閱覽比例，防止直向影片過高遮擋作者與文案 */
+    /* 貼文 (Feed Card)：閱覽比例調整，避免過長遮擋作者與文案 */
     .feed-item {
       border-bottom: 0.5px solid rgba(255,255,255,0.08);
       margin-bottom: 16px;
@@ -281,7 +281,7 @@
       margin-right: 6px;
     }
 
-    /* 個人主頁 Profile */
+    /* 個人主頁 Profile (純英文 UI) */
     .profile-info {
       padding: 14px 16px 8px;
     }
@@ -451,7 +451,7 @@
     }
     .nav-user-avatar.active { border-color: #fff; }
 
-    /* 訊息收件匣 */
+    /* 訊息收件匣 (英文標題) */
     .dm-notes-tray {
       display: flex;
       gap: 14px;
@@ -502,11 +502,12 @@
     }
     .dm-snippet { font-size: 12px; color: var(--subtext); margin-top: 2px; }
 
-    /* 藍勾 SVG 樣式 */
+    /* 官方藍色勾勾樣式 */
     .blue-verified-badge {
       display: inline-flex;
       color: #0095f6 !important;
       vertical-align: middle;
+      flex-shrink: 0;
     }
 
     /* 聊天室對話視圖 */
@@ -557,6 +558,21 @@
       align-self: flex-end;
       border-bottom-right-radius: 4px;
     }
+    .bubble-photo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      max-width: 82%;
+      align-self: flex-end;
+      margin-bottom: 4px;
+    }
+    .bubble-photo-grid img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      object-fit: cover;
+      display: block;
+    }
     .chat-input-bar {
       display: flex;
       padding: 8px 14px;
@@ -584,7 +600,7 @@
       cursor: pointer;
     }
 
-    /* 抽屜／Modal */
+    /* 抽屜／Modal (英文標題) */
     .sheet-modal {
       display: none;
       position: fixed;
@@ -751,10 +767,10 @@
         <div class="notif-title" id="notifTitle"></div>
         <div id="notifBody"></div>
       </div>
-      <div class="notif-time">現在</div>
+      <div class="notif-time">now</div>
     </div>
 
-    <!-- 頂部 Header：私密帳號規格（鎖頭與下拉箭頭，無藍勾） -->
+    <!-- 頂部 Header：私密帳號規格（帶鎖頭與下拉箭頭，無藍勾） -->
     <header class="ig-top-bar" id="mainHeader">
       <div id="topLogo" class="logo-area">
         <svg class="lock-icon-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
@@ -762,7 +778,7 @@
         <svg class="dropdown-arrow-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
       </div>
       <div class="top-bar-icons">
-        <div onclick="location.reload()" style="cursor:pointer;" title="重新整理">
+        <div onclick="location.reload()" style="cursor:pointer;" title="Refresh">
           <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
         </div>
         <div onclick="openNotificationSheet()" style="cursor:pointer;">
@@ -774,7 +790,7 @@
     <!-- 主滾動視圖 -->
     <main class="viewport">
 
-      <!-- 1. 首頁動態 (房屋 🏠：保留原照片 + 4部指定影片) -->
+      <!-- 1. 首頁動態 (Home Feed / 房屋 🏠：保留原照片 + 4部指定影片) -->
       <section id="pageFeed" class="page">
         <div class="stories-tray">
           <div class="story-node" onclick="startStoryGroup(0)">
@@ -799,26 +815,26 @@
         <div class="reels-scroll-area" id="reelsContainer"></div>
       </section>
 
-      <!-- 3. 訊息 Direct (最中間：全藍勾、官方客服與真實成員對話) -->
+      <!-- 3. 訊息 Direct (最中間：全藍勾、官方客服與真實成員中文對話) -->
       <section id="pageMessages" class="page">
         <div class="dm-notes-tray">
           <div class="note-avatar-wrapper">
-            <div class="note-bubble">寫筆記... 🫧</div>
+            <div class="note-bubble">Notes... 🫧</div>
             <img src="IMG_4810.jpeg" style="width:60px;height:60px;border-radius:50%;object-fit:cover;" />
-            <span style="margin-top:4px;">你的便利貼</span>
+            <span style="margin-top:4px;">Your note</span>
           </div>
           <div class="note-avatar-wrapper">
-            <div class="note-bubble">練習中 🎵</div>
+            <div class="note-bubble">Practice 🎵</div>
             <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg" onerror="this.src='IMG_7077.jpeg'" style="width:60px;height:60px;border-radius:50%;object-fit:cover;" />
             <span style="margin-top:4px;">imwinter</span>
           </div>
         </div>
 
-        <div style="padding: 12px 14px; font-weight:700; font-size:16px;">主要訊息</div>
+        <div style="padding: 12px 14px; font-weight:700; font-size:16px;">Messages</div>
 
-        <!-- 0. instagram 官方帳號 -->
-        <div class="dm-cell" onclick="openChat('instagram', 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_2050.jpeg', 'instagram')">
-          <img class="dm-avatar" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_2050.jpeg" onerror="this.src='IMG_2050.jpeg'" />
+        <!-- 0. instagram 官方帳號 (統一更換為 assets/logo/IMG_8341.jpeg) -->
+        <div class="dm-cell" onclick="openChat('instagram', 'assets/logo/IMG_8341.jpeg', 'instagram')">
+          <img class="dm-avatar" src="assets/logo/IMG_8341.jpeg" onerror="this.src='IMG_2050.jpeg'" />
           <div class="dm-details">
             <div class="dm-username">
               instagram
@@ -836,7 +852,7 @@
               imwinter
               <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
-            <div class="dm-snippet" id="snippet_winter">剛滑Reels看到好多可愛的狗勾衣服 忍不住買一堆 • 剛剛</div>
+            <div class="dm-snippet" id="snippet_winter">我買了一堆狗狗衣服 等等一起幫波妞穿 • 2小時</div>
           </div>
         </div>
 
@@ -848,7 +864,7 @@
               imnotningning
               <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
-            <div class="dm-snippet">問妳上次海底撈那個潤喉糖是在哪網購的我也想買 • 5小時</div>
+            <div class="dm-snippet">問妳海底撈喉糖是在哪網購的我也想買 • 5小時</div>
           </div>
         </div>
 
@@ -860,7 +876,7 @@
               aerichandesu
               <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
-            <div class="dm-snippet">上次巡迴在街角吃的那家塔可餅真的好好吃 想起來又想吃了 • 昨天</div>
+            <div class="dm-snippet">上次巡迴一起吃的塔可餅好想再吃 下次再去 • 昨天</div>
           </div>
         </div>
       </section>
@@ -873,7 +889,7 @@
         <div class="photo-grid" id="exploreGridList"></div>
       </section>
 
-      <!-- 5. 個人主頁 Profile (原本照片 + 3部原影片 + 15部指定新影片，followers: 411) -->
+      <!-- 5. 個人主頁 Profile (原本照片 + 3部原影片 + 15部指定新影片，followers: 411，純英文 UI) -->
       <section id="pageProfile" class="page active">
         <div class="profile-info">
           <div class="profile-row">
@@ -881,9 +897,10 @@
               <img src="IMG_4810.jpeg" alt="karina0411 avatar" />
             </div>
             <div class="profile-stats-group">
-              <div class="stat-box"><div class="count" id="profilePostCount">27</div><div class="desc">貼文</div></div>
-              <div class="stat-box"><div class="count">411</div><div class="desc">粉絲</div></div>
-              <div class="stat-box" onclick="openFollowingSheet()"><div class="count">6</div><div class="desc">追蹤中</div></div>
+              <div class="stat-box"><div class="count" id="profilePostCount">27</div><div class="desc">posts</div></div>
+              <!-- followers 精準為 411 -->
+              <div class="stat-box"><div class="count">411</div><div class="desc">followers</div></div>
+              <div class="stat-box" onclick="openFollowingSheet()"><div class="count">6</div><div class="desc">following</div></div>
             </div>
           </div>
           
@@ -902,8 +919,8 @@
           </div>
 
           <div class="profile-actions">
-            <button class="profile-btn">編輯個人檔案</button>
-            <button class="profile-btn">分享個人檔案</button>
+            <button class="profile-btn">Edit profile</button>
+            <button class="profile-btn">Share profile</button>
           </div>
         </div>
 
@@ -919,12 +936,12 @@
         <div class="photo-grid" id="profileGridList"></div>
       </section>
 
-      <!-- 6. 貼文串流頁面 -->
+      <!-- 6. 貼文串流頁面 (點擊縮圖精準對應滾動到該則貼文) -->
       <section id="pagePostStream" class="page">
         <div class="posts-stream-top">
           <span onclick="navTo('pageProfile')" style="font-size:22px; cursor:pointer;">←</span>
-          <span style="font-weight:700; font-size:16px;">貼文</span>
-          <span onclick="navTo('pageProfile')" style="font-size:14px; color:var(--blue); cursor:pointer;">完成</span>
+          <span style="font-weight:700; font-size:16px;">Posts</span>
+          <span onclick="navTo('pageProfile')" style="font-size:14px; color:var(--blue); cursor:pointer;">Done</span>
         </div>
         <div id="streamFeedList"></div>
       </section>
@@ -950,11 +967,11 @@
       </div>
     </nav>
 
-    <!-- 抽屜 1：6 位真實 Instagram 追蹤者 (全數改為官方正統藍色勾勾) -->
+    <!-- 抽屜 1：6 位真實 Instagram 追蹤者 (純官方藍勾、英文 UI) -->
     <div id="followingSheet" class="sheet-modal">
       <div class="sheet-content">
         <div class="sheet-header">
-          <span>追蹤中</span>
+          <span>Following</span>
           <span class="sheet-close-btn" onclick="closeSheet('followingSheet')">✕</span>
         </div>
         <div style="padding: 12px 16px;">
@@ -970,7 +987,7 @@
                 <div style="color:var(--subtext); font-size:12px;">aespa 에스파</div>
               </div>
             </div>
-            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
+            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">Following</button>
           </a>
 
           <a href="https://www.instagram.com/katarinabluu" target="_blank" class="following-user-row">
@@ -984,7 +1001,7 @@
                 <div style="color:var(--subtext); font-size:12px;">KARINA</div>
               </div>
             </div>
-            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
+            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">Following</button>
           </a>
 
           <a href="https://www.instagram.com/imwinter" target="_blank" class="following-user-row">
@@ -998,7 +1015,7 @@
                 <div style="color:var(--subtext); font-size:12px;">WINTER</div>
               </div>
             </div>
-            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
+            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">Following</button>
           </a>
 
           <a href="https://www.instagram.com/aerichandesu" target="_blank" class="following-user-row">
@@ -1012,7 +1029,7 @@
                 <div style="color:var(--subtext); font-size:12px;">GISELLE</div>
               </div>
             </div>
-            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
+            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">Following</button>
           </a>
 
           <a href="https://www.instagram.com/imnotningning" target="_blank" class="following-user-row">
@@ -1026,7 +1043,7 @@
                 <div style="color:var(--subtext); font-size:12px;">NINGNING</div>
               </div>
             </div>
-            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
+            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">Following</button>
           </a>
 
           <a href="https://www.instagram.com/pponyoim" target="_blank" class="following-user-row">
@@ -1037,38 +1054,38 @@
                 <div style="color:var(--subtext); font-size:12px;">뽀뇨</div>
               </div>
             </div>
-            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">追蹤中</button>
+            <button style="background:#262626; color:#fff; border:none; padding:6px 14px; border-radius:6px; font-weight:600; font-size:13px;">Following</button>
           </a>
 
         </div>
       </div>
     </div>
 
-    <!-- 抽屜 2：通知抽屜 -->
+    <!-- 抽屜 2：通知抽屜 (純英文 UI) -->
     <div id="notificationSheet" class="sheet-modal">
       <div class="sheet-content">
         <div class="sheet-header">
-          <span>通知</span>
+          <span>Notifications</span>
           <span class="sheet-close-btn" onclick="closeSheet('notificationSheet')">✕</span>
         </div>
         <div style="padding: 14px;">
-          <div style="font-weight:700; margin-bottom:12px; font-size:14px;">今天</div>
+          <div style="font-weight:700; margin-bottom:12px; font-size:14px;">Today</div>
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
             <div style="display:flex; align-items:center; gap:10px;">
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg" onerror="this.src='IMG_7077.jpeg'" style="width:42px;height:42px;border-radius:50%;object-fit:cover;" />
               <div style="font-size:13px; line-height:1.4;">
-                <b>imwinter</b> 說你的貼文讚 <span style="color:var(--subtext);">2小時</span>
+                <b>imwinter</b> liked your post <span style="color:var(--subtext);">2h</span>
               </div>
             </div>
             <img src="%E4%BF%AEkarina%20(328).jpeg" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" />
           </div>
 
-          <div style="font-weight:700; margin:16px 0 12px; font-size:14px;">昨天</div>
+          <div style="font-weight:700; margin:16px 0 12px; font-size:14px;">Yesterday</div>
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
             <div style="display:flex; align-items:center; gap:10px;">
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8043.jpeg" onerror="this.src='IMG_8043.jpeg'" style="width:42px;height:42px;border-radius:50%;object-fit:cover;" />
               <div style="font-size:13px; line-height:1.4;">
-                <b>imnotningning</b> 說你的貼文讚 <span style="color:var(--subtext);">1天</span>
+                <b>imnotningning</b> liked your post <span style="color:var(--subtext);">1d</span>
               </div>
             </div>
             <img src="IMG_2050.jpeg" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" />
@@ -1077,7 +1094,7 @@
       </div>
     </div>
 
-    <!-- 聊天室視窗 (支援真鍵盤回覆、多輪對話、官方客服連結) -->
+    <!-- 聊天室視窗 (支援真鍵盤、預設回覆提示、波妞照片發送) -->
     <div id="chatRoom">
       <div class="chat-top">
         <span onclick="closeChat()" style="font-size:20px; cursor:pointer;">←</span>
@@ -1086,8 +1103,8 @@
       </div>
       <div class="chat-body" id="chatMessageFlow"></div>
       <div class="chat-input-bar">
-        <input type="text" id="chatInputText" placeholder="發送訊息..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
-        <button class="chat-send-btn" onclick="sendChatMessage()">傳送</button>
+        <input type="text" id="chatInputText" placeholder="發送訊息..." onfocus="prepareDefaultInput()" onkeydown="if(event.key==='Enter') sendChatMessage()" />
+        <button class="chat-send-btn" onclick="sendChatMessage()">Send</button>
       </div>
     </div>
 
@@ -1126,7 +1143,7 @@
       { id: 'bp9', type: 'image', src: 'IMG_4810.jpeg', caption: 'Winter tenderness ❄️💙', likes: 382, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' }
     ];
 
-    // 2. 個人主頁（九宮格）資料：原本照片 + 3部原影片 + 15部指定新影片 (共27則)
+    // 2. 個人主頁（九宮格）資料：原本照 + 3部原影片 + 15部指定新影片，發文者統一為 karina0411 (共27則)
     const profileItems = [
       ...basePhotos,
       { id: 'pr_v1', type: 'video', src: 'Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4', caption: 'Practice 💫', likes: 215, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
@@ -1213,13 +1230,11 @@
       videoEl.play().catch(()=>{});
     }
 
-    // 雙擊解鎖畫面與聲音（針對 iOS 偶發性黑畫面）
     let lastTapTime = 0;
     function handleVideoTap(videoEl, badgeId, buttonId) {
       const now = new Date().getTime();
       const timesince = now - lastTapTime;
       if (timesince < 350 && timesince > 0) {
-        // 雙擊：強制重新加載與有聲播放
         isGlobalSoundActive = true;
         videoEl.muted = false;
         videoEl.load();
@@ -1232,7 +1247,6 @@
           setTimeout(() => badge.classList.remove('visible'), 600);
         }
       } else {
-        // 單擊：切換聲音
         toggleVideoSound(videoEl, badgeId, buttonId);
       }
       lastTapTime = now;
@@ -1242,7 +1256,7 @@
       const el = document.getElementById(captionId);
       if (!el) return;
       const oldText = el.innerText;
-      const newText = prompt('編輯貼文說明 (Edit Caption):', oldText);
+      const newText = prompt('Edit caption:', oldText);
       if (newText !== null && newText.trim() !== '') {
         el.innerText = newText.trim();
       }
@@ -1250,9 +1264,9 @@
 
     function formatLikesText(item) {
       if (item.author === 'karina0411') {
-        return `${item.likeUser} 和其他 ${item.likes} 人都說讚`;
+        return `Liked by ${item.likeUser} and ${item.likes} others`;
       }
-      return `${item.likeUser} 和其他 ${(item.likes/10000).toFixed(1)} 萬人都說讚`;
+      return `Liked by ${item.likeUser} and ${(item.likes/10000).toFixed(1)}M others`;
     }
 
     function buildPostCardHTML(item, prefix) {
@@ -1368,7 +1382,7 @@
             <div class="reel-side-controls" onclick="event.stopPropagation()">
               <div class="reel-action-btn" onclick="toggleReelHeart('rh_${r.id}', 'rc_${r.id}', ${r.likes})">
                 <span id="rh_${r.id}"><svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
-                <span id="rc_${r.id}">${(r.likes/10000).toFixed(1)}萬</span>
+                <span id="rc_${r.id}">${(r.likes/10000).toFixed(1)}M</span>
               </div>
               <div class="reel-action-btn">
                 <svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -1390,7 +1404,6 @@
       scheduleNotifications();
     }
 
-    // 只有 1 部在正中央的影片能播放
     function setupVideoAutoPlayObserver() {
       if (videoObserver) videoObserver.disconnect();
       videoObserver = new IntersectionObserver((entries) => {
@@ -1454,11 +1467,11 @@
       if (!isLiked) {
         el.innerHTML = `<svg width="28" height="28" fill="#ff3040" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
         el.dataset.liked = 'true';
-        document.getElementById(countId).innerText = `${((base+1)/10000).toFixed(1)}萬`;
+        document.getElementById(countId).innerText = `${((base+1)/10000).toFixed(1)}M`;
       } else {
         el.innerHTML = `<svg width="28" height="28" fill="#fff" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
         el.dataset.liked = 'false';
-        document.getElementById(countId).innerText = `${(base/10000).toFixed(1)}萬`;
+        document.getElementById(countId).innerText = `${(base/10000).toFixed(1)}M`;
       }
     }
 
@@ -1550,17 +1563,17 @@
         heart.innerHTML = `<svg width="24" height="24" fill="#ff3040" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
         heart.dataset.liked = 'true';
         if (author === 'karina0411') {
-          text.innerText = `你、${user} 和其他 ${baseLikes} 人都說讚`;
+          text.innerText = `Liked by you, ${user} and ${baseLikes} others`;
         } else {
-          text.innerText = `你、${user} 和其他 ${(baseLikes/10000).toFixed(1)} 萬人都說讚`;
+          text.innerText = `Liked by you, ${user} and ${(baseLikes/10000).toFixed(1)}M others`;
         }
       } else {
         heart.innerHTML = `<svg width="24" height="24" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
         heart.dataset.liked = 'false';
         if (author === 'karina0411') {
-          text.innerText = `${user} 和其他 ${baseLikes} 人都說讚`;
+          text.innerText = `Liked by ${user} and ${baseLikes} others`;
         } else {
-          text.innerText = `${user} 和其他 ${(baseLikes/10000).toFixed(1)} 萬人都說讚`;
+          text.innerText = `Liked by ${user} and ${(baseLikes/10000).toFixed(1)}M others`;
         }
       }
     }
@@ -1665,15 +1678,15 @@
       document.getElementById('storyPlayer').classList.remove('active');
     }
 
-    // --- 訊息對話劇本 (至少兩次以上來回對話，支援鍵盤自由輸入) ---
+    // --- 訊息對話劇本 (至少兩次以上來回對話，支援鍵盤自由輸入 + 自動帶出預設回覆) ---
     const chatScenarios = {
       instagram: {
         partner: 'instagram',
-        avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_2050.jpeg',
+        avatar: 'assets/logo/IMG_8341.jpeg',
         hasBlueBadge: true,
         dialogues: [
           { role: 'received', text: '若影片呈現「黑畫面」，請點擊影片區域或音量鍵兩次。仍無法解決請按右上角重整鍵。' },
-          { role: 'sent', triggerMatch: '知道了', text: '知道了' },
+          { role: 'sent', text: '知道了' },
           { role: 'received', text: '若仍操作不順，請聯繫 <a href="https://www.threads.com/@kelly_lee_805" target="_blank" style="color:#0095f6;text-decoration:underline;">@kelly_lee_805</a>' }
         ]
       },
@@ -1686,7 +1699,16 @@
           { role: 'sent', text: '買幾件啊 波妞又要眼神死了吧哈哈哈' },
           { role: 'received', text: '買了五件 我先準備肉泥零食 等等回房見' },
           { role: 'sent', text: '好啊 等等回去幫妳一起抓著牠' },
-          { role: 'received', text: '太好了一定超可愛' }
+          { role: 'received', text: '太好了一定超可愛' },
+          // 冬回完後，Karina 同時回傳兩張照片 + …🥺
+          { 
+            role: 'sent-photos', 
+            photos: [
+              'assets/pponyo/IMG_8335.jpeg', 
+              'assets/pponyo/ba16885e91898c661a7995f7098a89371f053294.jpeg'
+            ],
+            text: '…🥺'
+          }
         ]
       },
       ningning: {
@@ -1733,22 +1755,52 @@
       const flow = document.getElementById('chatMessageFlow');
       flow.innerHTML = '';
 
-      // 渲染初始對話
       if (data.dialogues.length > 0) {
         renderBubble(data.dialogues[0]);
         chatStep = 1;
       }
 
-      document.getElementById('chatInputText').value = '';
+      // 自動帶出第一句預設文字
+      prepareDefaultInput();
       document.getElementById('chatRoom').classList.add('active');
+    }
+
+    // 點擊訊息欄自動帶出準備回覆的預設文字
+    function prepareDefaultInput() {
+      const data = chatScenarios[currentChatKey];
+      const input = document.getElementById('chatInputText');
+      if (!data || !input) return;
+
+      if (chatStep < data.dialogues.length && (data.dialogues[chatStep].role === 'sent' || data.dialogues[chatStep].role === 'sent-photos')) {
+        input.value = data.dialogues[chatStep].text || '';
+      }
     }
 
     function renderBubble(item) {
       const flow = document.getElementById('chatMessageFlow');
-      const bubble = document.createElement('div');
-      bubble.className = `bubble ${item.role}`;
-      bubble.innerHTML = item.text;
-      flow.appendChild(bubble);
+
+      // 如果包含雙照片 (如波妞照)
+      if (item.role === 'sent-photos') {
+        const photoGrid = document.createElement('div');
+        photoGrid.className = 'bubble-photo-grid';
+        item.photos.forEach(src => {
+          const img = document.createElement('img');
+          img.src = src;
+          photoGrid.appendChild(img);
+        });
+        flow.appendChild(photoGrid);
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble sent';
+        bubble.innerHTML = item.text;
+        flow.appendChild(bubble);
+      } else {
+        const bubble = document.createElement('div');
+        bubble.className = `bubble ${item.role}`;
+        bubble.innerHTML = item.text;
+        flow.appendChild(bubble);
+      }
+
       flow.scrollTop = flow.scrollHeight;
     }
 
@@ -1756,7 +1808,6 @@
       document.getElementById('chatRoom').classList.remove('active');
     }
 
-    // 發送訊息（真鍵盤輸入＋自動推展劇情）
     function sendChatMessage() {
       const input = document.getElementById('chatInputText');
       const typedVal = input.value.trim();
@@ -1765,37 +1816,49 @@
       const data = chatScenarios[currentChatKey];
       if (!data) return;
 
-      let sendText = typedVal;
-      // 若未打字，自動使用劇本台詞
-      if (!sendText && chatStep < data.dialogues.length && data.dialogues[chatStep].role === 'sent') {
-        sendText = data.dialogues[chatStep].text;
-      }
-
-      if (!sendText) return;
-
-      renderBubble({ role: 'sent', text: sendText });
-      chatStep++;
-
-      // 對方自動接續回覆
-      setTimeout(() => {
-        if (chatStep < data.dialogues.length && data.dialogues[chatStep].role === 'received') {
-          renderBubble(data.dialogues[chatStep]);
+      if (chatStep < data.dialogues.length) {
+        const nextItem = data.dialogues[chatStep];
+        if (nextItem.role === 'sent' || nextItem.role === 'sent-photos') {
+          // 如果有打字則覆蓋，無打字則送出劇本
+          if (typedVal && nextItem.role === 'sent') {
+            nextItem.text = typedVal;
+          }
+          renderBubble(nextItem);
           chatStep++;
+
+          // 對方接續回覆
+          setTimeout(() => {
+            if (chatStep < data.dialogues.length && data.dialogues[chatStep].role === 'received') {
+              renderBubble(data.dialogues[chatStep]);
+              chatStep++;
+              // 準備下一輪預設輸入
+              prepareDefaultInput();
+
+              // 如果冬回完「太好了一定超可愛」，自動觸發 Karina 回傳波妞雙照片與…🥺
+              if (currentChatKey === 'winter' && chatStep < data.dialogues.length && data.dialogues[chatStep].role === 'sent-photos') {
+                setTimeout(() => {
+                  renderBubble(data.dialogues[chatStep]);
+                  chatStep++;
+                  prepareDefaultInput();
+                }, 1000);
+              }
+            }
+          }, 700);
         }
-      }, 700);
+      }
     }
 
     // --- 定時推播通知排程 (5秒 & 1分鐘) ---
     let pendingNotifAction = null;
     function scheduleNotifications() {
-      // 1. 點進 IG 5 秒後：由 instagram 官方傳送
+      // 1. 點進 IG 5 秒後：由 instagram 官方傳送 (使用 assets/logo/IMG_8341.jpeg)
       setTimeout(() => {
         showInAppNotif({
-          avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_2050.jpeg',
+          avatar: 'assets/logo/IMG_8341.jpeg',
           title: 'instagram',
           hasBlueBadge: true,
           body: '若影片呈現「黑畫面」，請點擊影片區域或音量鍵兩次。仍無法解決請按右上角重整鍵。',
-          action: () => openChat('instagram', 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_2050.jpeg', 'instagram')
+          action: () => openChat('instagram', 'assets/logo/IMG_8341.jpeg', 'instagram')
         });
       }, 5000);
 
