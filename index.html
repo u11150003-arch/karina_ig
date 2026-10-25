@@ -90,6 +90,55 @@
       align-items: center;
     }
 
+    /* 頂部彈出式推播通知橫幅 */
+    .in-app-notification {
+      position: fixed;
+      top: calc(12px + env(safe-area-inset-top, 0px));
+      left: 50%;
+      transform: translateX(-50%) translateY(-150%);
+      width: calc(100% - 24px);
+      max-width: 416px;
+      background: rgba(30, 30, 30, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 0.5px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 999;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
+    .in-app-notification.show {
+      transform: translateX(-50%) translateY(0);
+    }
+    .notif-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .notif-text {
+      flex: 1;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .notif-title {
+      font-weight: 700;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .notif-time {
+      font-size: 11px;
+      color: var(--subtext);
+    }
+
     /* 主滾動區 */
     main.viewport {
       width: 100%;
@@ -134,7 +183,7 @@
       border: 2px solid #000;
     }
 
-    /* 貼文 (Feed Card) */
+    /* 貼文 (Feed Card)：調整閱覽比例，防止直向影片過高遮擋作者與文案 */
     .feed-item {
       border-bottom: 0.5px solid rgba(255,255,255,0.08);
       margin-bottom: 16px;
@@ -160,18 +209,19 @@
     }
     .feed-photo-container {
       width: 100%;
-      background: #111;
+      max-height: 72vh;
+      background: #000;
       position: relative;
       overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 320px;
     }
     .feed-photo-container img, .feed-photo-container video {
       width: 100%;
+      max-height: 72vh;
       display: block;
-      object-fit: cover;
+      object-fit: contain;
     }
 
     .mute-toggle-btn {
@@ -443,8 +493,21 @@
       object-fit: cover;
     }
     .dm-details { flex: 1; }
-    .dm-username { font-weight: 600; font-size: 14px; }
+    .dm-username {
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
     .dm-snippet { font-size: 12px; color: var(--subtext); margin-top: 2px; }
+
+    /* 藍勾 SVG 樣式 */
+    .blue-verified-badge {
+      display: inline-flex;
+      color: #0095f6 !important;
+      vertical-align: middle;
+    }
 
     /* 聊天室對話視圖 */
     #chatRoom {
@@ -480,7 +543,7 @@
       padding: 10px 14px;
       border-radius: 18px;
       font-size: 14px;
-      line-height: 1.4;
+      line-height: 1.45;
       word-break: break-word;
     }
     .bubble.received {
@@ -681,7 +744,17 @@
     <!-- 背景音樂音訊元素 -->
     <audio id="bgAudio" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-PLAYLIST/main/May%20the%20TENDERNESS%20be%20with%20you.mp3" preload="auto"></audio>
 
-    <!-- 頂部 Header：私密帳號規格（帶鎖頭與下拉箭頭，無藍勾） -->
+    <!-- 頂部浮動推播通知橫幅 -->
+    <div id="inAppNotif" class="in-app-notification" onclick="handleNotificationClick()">
+      <img id="notifAvatar" class="notif-avatar" src="" />
+      <div class="notif-text">
+        <div class="notif-title" id="notifTitle"></div>
+        <div id="notifBody"></div>
+      </div>
+      <div class="notif-time">現在</div>
+    </div>
+
+    <!-- 頂部 Header：私密帳號規格（鎖頭與下拉箭頭，無藍勾） -->
     <header class="ig-top-bar" id="mainHeader">
       <div id="topLogo" class="logo-area">
         <svg class="lock-icon-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
@@ -701,7 +774,7 @@
     <!-- 主滾動視圖 -->
     <main class="viewport">
 
-      <!-- 1. 首頁動態 (房屋 🏠：保留原照片 + 4部指定發文者影片) -->
+      <!-- 1. 首頁動態 (房屋 🏠：保留原照片 + 4部指定影片) -->
       <section id="pageFeed" class="page">
         <div class="stories-tray">
           <div class="story-node" onclick="startStoryGroup(0)">
@@ -726,7 +799,7 @@
         <div class="reels-scroll-area" id="reelsContainer"></div>
       </section>
 
-      <!-- 3. 訊息 Direct (最中間：imwinter、中文對話劇情、點擊自動回覆) -->
+      <!-- 3. 訊息 Direct (最中間：全藍勾、官方客服與真實成員對話) -->
       <section id="pageMessages" class="page">
         <div class="dm-notes-tray">
           <div class="note-avatar-wrapper">
@@ -743,30 +816,51 @@
 
         <div style="padding: 12px 14px; font-weight:700; font-size:16px;">主要訊息</div>
 
-        <!-- 1. imwinter (室友 & 波妞狗衣服) -->
+        <!-- 0. instagram 官方帳號 -->
+        <div class="dm-cell" onclick="openChat('instagram', 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_2050.jpeg', 'instagram')">
+          <img class="dm-avatar" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_2050.jpeg" onerror="this.src='IMG_2050.jpeg'" />
+          <div class="dm-details">
+            <div class="dm-username">
+              instagram
+              <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+            <div class="dm-snippet" id="snippet_instagram">若影片呈現「黑畫面」，請點擊影片區域兩次 • 剛剛</div>
+          </div>
+        </div>
+
+        <!-- 1. imwinter -->
         <div class="dm-cell" onclick="openChat('imwinter', 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg', 'winter')">
           <img class="dm-avatar" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg" onerror="this.src='IMG_7077.jpeg'" />
           <div class="dm-details">
-            <div class="dm-username">imwinter</div>
-            <div class="dm-snippet">我買了一堆狗狗衣服 等等一起幫波妞穿 • 2小時</div>
+            <div class="dm-username">
+              imwinter
+              <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+            <div class="dm-snippet" id="snippet_winter">剛滑Reels看到好多可愛的狗勾衣服 忍不住買一堆 • 剛剛</div>
           </div>
         </div>
 
-        <!-- 2. imnotningning (海底撈喉糖) -->
+        <!-- 2. imnotningning -->
         <div class="dm-cell" onclick="openChat('imnotningning', 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8043.jpeg', 'ningning')">
           <img class="dm-avatar" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8043.jpeg" onerror="this.src='IMG_8043.jpeg'" />
           <div class="dm-details">
-            <div class="dm-username">imnotningning</div>
-            <div class="dm-snippet">問妳海底撈喉糖是在哪網購的我也想買 • 5小時</div>
+            <div class="dm-username">
+              imnotningning
+              <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+            <div class="dm-snippet">問妳上次海底撈那個潤喉糖是在哪網購的我也想買 • 5小時</div>
           </div>
         </div>
 
-        <!-- 3. aerichandesu (巡迴塔可餅) -->
+        <!-- 3. aerichandesu -->
         <div class="dm-cell" onclick="openChat('aerichandesu', 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png', 'giselle')">
           <img class="dm-avatar" src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png" onerror="this.src='IMG_8042.png'" />
           <div class="dm-details">
-            <div class="dm-username">aerichandesu</div>
-            <div class="dm-snippet">上次巡迴一起吃的塔可餅好想再吃 下次再去 • 昨天</div>
+            <div class="dm-username">
+              aerichandesu
+              <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+            <div class="dm-snippet">上次巡迴在街角吃的那家塔可餅真的好好吃 想起來又想吃了 • 昨天</div>
           </div>
         </div>
       </section>
@@ -788,7 +882,6 @@
             </div>
             <div class="profile-stats-group">
               <div class="stat-box"><div class="count" id="profilePostCount">27</div><div class="desc">貼文</div></div>
-              <!-- followers 精準為 411 -->
               <div class="stat-box"><div class="count">411</div><div class="desc">粉絲</div></div>
               <div class="stat-box" onclick="openFollowingSheet()"><div class="count">6</div><div class="desc">追蹤中</div></div>
             </div>
@@ -826,7 +919,7 @@
         <div class="photo-grid" id="profileGridList"></div>
       </section>
 
-      <!-- 6. 貼文串流頁面 (點擊縮圖精準對應滾動到該則貼文) -->
+      <!-- 6. 貼文串流頁面 -->
       <section id="pagePostStream" class="page">
         <div class="posts-stream-top">
           <span onclick="navTo('pageProfile')" style="font-size:22px; cursor:pointer;">←</span>
@@ -857,7 +950,7 @@
       </div>
     </nav>
 
-    <!-- 抽屜 1：6 位真實 Instagram 追蹤者 (直接引用 KARINA-iphone 倉庫真實路徑) -->
+    <!-- 抽屜 1：6 位真實 Instagram 追蹤者 (全數改為官方正統藍色勾勾) -->
     <div id="followingSheet" class="sheet-modal">
       <div class="sheet-content">
         <div class="sheet-header">
@@ -871,7 +964,8 @@
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg" onerror="this.src='IMG_4675.jpeg'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
               <div>
                 <div style="font-weight:600; font-size:14px; display:flex; align-items:center; gap:4px;">
-                  aespa_official <svg class="verified-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  aespa_official 
+                  <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                 </div>
                 <div style="color:var(--subtext); font-size:12px;">aespa 에스파</div>
               </div>
@@ -884,7 +978,8 @@
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_6344.jpeg" onerror="this.src='IMG_6344.jpeg'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
               <div>
                 <div style="font-weight:600; font-size:14px; display:flex; align-items:center; gap:4px;">
-                  katarinabluu <svg class="verified-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  katarinabluu 
+                  <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                 </div>
                 <div style="color:var(--subtext); font-size:12px;">KARINA</div>
               </div>
@@ -897,7 +992,8 @@
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg" onerror="this.src='IMG_7077.jpeg'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
               <div>
                 <div style="font-weight:600; font-size:14px; display:flex; align-items:center; gap:4px;">
-                  imwinter <svg class="verified-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  imwinter 
+                  <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                 </div>
                 <div style="color:var(--subtext); font-size:12px;">WINTER</div>
               </div>
@@ -910,7 +1006,8 @@
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png" onerror="this.src='IMG_8042.png'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
               <div>
                 <div style="font-weight:600; font-size:14px; display:flex; align-items:center; gap:4px;">
-                  aerichandesu <svg class="verified-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  aerichandesu 
+                  <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                 </div>
                 <div style="color:var(--subtext); font-size:12px;">GISELLE</div>
               </div>
@@ -923,7 +1020,8 @@
               <img src="https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8043.jpeg" onerror="this.src='IMG_8043.jpeg'" style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
               <div>
                 <div style="font-weight:600; font-size:14px; display:flex; align-items:center; gap:4px;">
-                  imnotningning <svg class="verified-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  imnotningning 
+                  <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                 </div>
                 <div style="color:var(--subtext); font-size:12px;">NINGNING</div>
               </div>
@@ -946,7 +1044,7 @@
       </div>
     </div>
 
-    <!-- 抽屜 2：通知抽屜 (符合作為私密帳號好友按讚的真實情境) -->
+    <!-- 抽屜 2：通知抽屜 -->
     <div id="notificationSheet" class="sheet-modal">
       <div class="sheet-content">
         <div class="sheet-header">
@@ -979,17 +1077,17 @@
       </div>
     </div>
 
-    <!-- 聊天室視窗 (全自動對話流程，點擊輸入框即自動送出隨興對白) -->
+    <!-- 聊天室視窗 (支援真鍵盤回覆、多輪對話、官方客服連結) -->
     <div id="chatRoom">
       <div class="chat-top">
         <span onclick="closeChat()" style="font-size:20px; cursor:pointer;">←</span>
         <img id="chatHeaderImg" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" />
-        <span id="chatHeaderName" style="font-weight:600; font-size:15px;"></span>
+        <span id="chatHeaderName" style="font-weight:600; font-size:15px; display:flex; align-items:center; gap:4px;"></span>
       </div>
       <div class="chat-body" id="chatMessageFlow"></div>
       <div class="chat-input-bar">
-        <input type="text" id="chatInputText" placeholder="發送訊息..." onclick="handleAutoChat()" onkeydown="if(event.key==='Enter') handleAutoChat()" />
-        <button class="chat-send-btn" onclick="handleAutoChat()">傳送</button>
+        <input type="text" id="chatInputText" placeholder="發送訊息..." onkeydown="if(event.key==='Enter') sendChatMessage()" />
+        <button class="chat-send-btn" onclick="sendChatMessage()">傳送</button>
       </div>
     </div>
 
@@ -1028,14 +1126,12 @@
       { id: 'bp9', type: 'image', src: 'IMG_4810.jpeg', caption: 'Winter tenderness ❄️💙', likes: 382, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' }
     ];
 
-    // 2. 個人主頁（九宮格）資料：原本照片 + 3部原影片 + 15部指定新影片，發文者統一為 karina0411 (共27則)
+    // 2. 個人主頁（九宮格）資料：原本照片 + 3部原影片 + 15部指定新影片 (共27則)
     const profileItems = [
       ...basePhotos,
-      // 原有 3 部影片
       { id: 'pr_v1', type: 'video', src: 'Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4', caption: 'Practice 💫', likes: 215, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
       { id: 'pr_v2', type: 'video', src: 'ScreenRecording_09-04-2026%2001-12-51_1.mov', caption: 'Behind moments 🎬', likes: 289, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
       { id: 'pr_v3', type: 'video', src: 'gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4', caption: 'Encore stage ✨', likes: 374, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      // 新增 15 部影片 (依最新指令配置)
       { id: 'pr_v4', type: 'video', src: 'assets/videos/karina_video_blowflower.mp4', caption: 'Spring breeze 🌸', likes: 242, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
       { id: 'pr_v5', type: 'video', src: 'assets/videos/karina_video_bowl.mp4', caption: 'Cute props 🥣✨', likes: 218, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
       { id: 'pr_v6', type: 'video', src: 'assets/videos/karina_video_christmas.mp4', caption: 'Christmas time 🎄🎅', likes: 312, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
@@ -1053,7 +1149,7 @@
       { id: 'pr_v18', type: 'video', src: 'assets/videos/karina_video_tamagotchi.mp4', caption: 'Tamagotchi 👾🎮', likes: 245, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' }
     ];
 
-    // 3. 搜尋/探索頁面（放大鏡 🔍）：完全移除照片，純影片九宮格，發文者統一為 aespa_official，特例除外 (16部)
+    // 3. 搜尋/探索頁面（放大鏡 🔍）：純影片九宮格，發文者統一為 aespa_official，特例除外 (16部)
     const exploreItems = [
       { id: 'ex_v1', src: 'assets/videos/karina_video_genie.mp4', caption: 'Genie challenge 🧞‍♀️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
       { id: 'ex_v2', src: 'assets/videos/karina_video_guilty.mp4', caption: 'Guilty 🖤', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
@@ -1062,10 +1158,10 @@
       { id: 'ex_v5', src: 'assets/videos/karina_video_chase.mp4', caption: 'Chase the rhythm 💫', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
       { id: 'ex_v6', src: 'assets/videos/karina_video_lemonade.mp4', caption: 'Lemonade 🍋', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
       { id: 'ex_v7', src: 'assets/videos/karina_video_lemontang.mp4', caption: 'Lemon vibes 🍹', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
-      { id: 'ex_v8', src: 'assets/videos/karina_video_beautifulchristmas.mp4', caption: 'Beautiful Christmas 🎄❤️', author: 'imwinter', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg' }, // 特例：winter
+      { id: 'ex_v8', src: 'assets/videos/karina_video_beautifulchristmas.mp4', caption: 'Beautiful Christmas 🎄❤️', author: 'imwinter', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg' },
       { id: 'ex_v9', src: 'assets/videos/karina_video_snowdance.mp4', caption: 'Snow dance ❄️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
       { id: 'ex_v10', src: 'assets/videos/karina_video_aegwoo.mp4', caption: 'Aegwoo moment 💙', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
-      { id: 'ex_v11', src: 'assets/videos/karinagiselle_video_channel.mp4', caption: 'Backstage hello 👭', author: 'aerichandesu', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png' }, // 特例：giselle
+      { id: 'ex_v11', src: 'assets/videos/karinagiselle_video_channel.mp4', caption: 'Backstage hello 👭', author: 'aerichandesu', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png' },
       { id: 'ex_v12', src: 'assets/videos/karina_video_everyday.mp4', caption: 'Everyday mood 🤍', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
       { id: 'ex_v13', src: 'assets/videos/karina_video_serenade.mp4', caption: 'Serenade 🎶', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
       { id: 'ex_v14', src: 'assets/videos/karina_video_taeyong.mp4', caption: 'Taeyong x Karina 🕺', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
@@ -1117,6 +1213,31 @@
       videoEl.play().catch(()=>{});
     }
 
+    // 雙擊解鎖畫面與聲音（針對 iOS 偶發性黑畫面）
+    let lastTapTime = 0;
+    function handleVideoTap(videoEl, badgeId, buttonId) {
+      const now = new Date().getTime();
+      const timesince = now - lastTapTime;
+      if (timesince < 350 && timesince > 0) {
+        // 雙擊：強制重新加載與有聲播放
+        isGlobalSoundActive = true;
+        videoEl.muted = false;
+        videoEl.load();
+        playSoleVideo(videoEl);
+        updateSpeakerIcon(document.getElementById(buttonId), true);
+        const badge = document.getElementById(badgeId);
+        if (badge) {
+          badge.innerHTML = `<svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>`;
+          badge.classList.add('visible');
+          setTimeout(() => badge.classList.remove('visible'), 600);
+        }
+      } else {
+        // 單擊：切換聲音
+        toggleVideoSound(videoEl, badgeId, buttonId);
+      }
+      lastTapTime = now;
+    }
+
     function editCaption(captionId) {
       const el = document.getElementById(captionId);
       if (!el) return;
@@ -1127,7 +1248,6 @@
       }
     }
 
-    // 格式化讚數文字：私密帳號小於 1000 顯示純數字，公開帳號顯示萬/M
     function formatLikesText(item) {
       if (item.author === 'karina0411') {
         return `${item.likeUser} 和其他 ${item.likes} 人都說讚`;
@@ -1148,7 +1268,7 @@
               <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
             </div>
           </div>
-          <div class="feed-photo-container" ${item.type === 'video' ? `onclick="toggleVideoSound(document.getElementById('v_${uniqueId}'), 'badge_${uniqueId}', 'btn_mute_${uniqueId}')"` : ''}>
+          <div class="feed-photo-container" ${item.type === 'video' ? `onclick="handleVideoTap(document.getElementById('v_${uniqueId}'), 'badge_${uniqueId}', 'btn_mute_${uniqueId}')"` : ''}>
             ${item.type === 'video' 
               ? `
                 <video class="stream-video" id="v_${uniqueId}" src="${item.src}" preload="auto" loop muted playsinline webkit-playsinline></video>
@@ -1194,7 +1314,7 @@
       explore.innerHTML = '';
       reelsContainer.innerHTML = '';
 
-      // --- 1. 個人主頁（九宮格 + 貼文串流）：27 篇貼文精準對應 ---
+      // 1. 個人主頁
       document.getElementById('profilePostCount').innerText = profileItems.length;
       profileItems.forEach(post => {
         const cell = document.createElement('div');
@@ -1214,7 +1334,7 @@
         stream.insertAdjacentHTML('beforeend', buildPostCardHTML(post, 'pr'));
       });
 
-      // --- 2. 搜尋 / 探索頁面 (放大鏡 🔍：16部純影片九宮格，發文者統一為 aespa_official，特例除外) ---
+      // 2. 探索
       exploreItems.forEach(item => {
         const cell = document.createElement('div');
         cell.className = 'grid-cell';
@@ -1228,7 +1348,7 @@
         stream.insertAdjacentHTML('beforeend', buildPostCardHTML(item, 'ex'));
       });
 
-      // --- 3. 首頁動態 (房屋 🏠：保留原本照片，放入指定 4 部影片) ---
+      // 3. 首頁
       const combinedHome = [...basePhotos];
       homeVideos.forEach((hv, i) => {
         combinedHome.splice((i * 2) + 1, 0, hv);
@@ -1237,10 +1357,10 @@
         homeFeed.insertAdjacentHTML('beforeend', buildPostCardHTML(item, 'hm'));
       });
 
-      // --- 4. 連續短片區 (Reels ▷：指定 4 部) ---
+      // 4. Reels
       reelsItems.forEach(r => {
         const reelHTML = `
-          <div class="reel-block" onclick="toggleVideoSound(document.getElementById('reel_v_${r.id}'), 'badge_r_${r.id}', 'btn_sound_r_${r.id}')">
+          <div class="reel-block" onclick="handleVideoTap(document.getElementById('reel_v_${r.id}'), 'badge_r_${r.id}', 'btn_sound_r_${r.id}')">
             <video class="reel-video" id="reel_v_${r.id}" src="assets/videos/${r.file}#t=0.001" preload="auto" loop muted playsinline webkit-playsinline></video>
             <div class="sound-badge-indicator" id="badge_r_${r.id}">
               <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>
@@ -1267,9 +1387,10 @@
 
       setupVideoAutoPlayObserver();
       setupSwipeGestures();
+      scheduleNotifications();
     }
 
-    // 只有 1 部在正中央的影片能播放，滑走即停
+    // 只有 1 部在正中央的影片能播放
     function setupVideoAutoPlayObserver() {
       if (videoObserver) videoObserver.disconnect();
       videoObserver = new IntersectionObserver((entries) => {
@@ -1298,12 +1419,6 @@
       } else {
         containerEl.innerHTML = `<svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`;
       }
-    }
-
-    function updateAllSpeakerIcons(isUnmuted) {
-      document.querySelectorAll('.sound-btn-circle, .mute-toggle-btn').forEach(btn => {
-        updateSpeakerIcon(btn, isUnmuted);
-      });
     }
 
     function toggleVideoSound(videoEl, badgeId, buttonId) {
@@ -1364,7 +1479,6 @@
 
         if (Math.abs(deltaY) < 60) {
           if (deltaX > 70) {
-            // 向右滑返回
             if (document.getElementById('pagePostStream').classList.contains('active')) {
               navTo('pageProfile');
             } else if (document.getElementById('chatRoom').classList.contains('active')) {
@@ -1373,7 +1487,6 @@
               navTo('pageFeed');
             }
           } else if (deltaX < -70) {
-            // 向左滑
             if (document.getElementById('pageFeed').classList.contains('active')) {
               navTo('pageMessages');
             }
@@ -1552,78 +1665,171 @@
       document.getElementById('storyPlayer').classList.remove('active');
     }
 
-    // --- 訊息對話劇本 (自然隨興、無標點符號、自動送出與回覆) ---
+    // --- 訊息對話劇本 (至少兩次以上來回對話，支援鍵盤自由輸入) ---
     const chatScenarios = {
+      instagram: {
+        partner: 'instagram',
+        avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_2050.jpeg',
+        hasBlueBadge: true,
+        dialogues: [
+          { role: 'received', text: '若影片呈現「黑畫面」，請點擊影片區域或音量鍵兩次。仍無法解決請按右上角重整鍵。' },
+          { role: 'sent', triggerMatch: '知道了', text: '知道了' },
+          { role: 'received', text: '若仍操作不順，請聯繫 <a href="https://www.threads.com/@kelly_lee_805" target="_blank" style="color:#0095f6;text-decoration:underline;">@kelly_lee_805</a>' }
+        ]
+      },
       winter: {
         partner: 'imwinter',
         avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg',
-        initial: '剛滑Reels看到好多可愛的狗衣服 忍不住買一堆回來 等等回房幫我一起讓波妞穿穿看',
-        autoReplyUser: '買幾件啊 波妞又要眼神死了吧哈哈哈',
-        autoResponse: '買了五件 我先準備肉泥零食 等等回房見'
+        hasBlueBadge: true,
+        dialogues: [
+          { role: 'received', text: '剛滑Reels看到好多可愛的狗勾衣服 忍不住買一堆 等等回房幫我一起讓波妞穿穿看' },
+          { role: 'sent', text: '買幾件啊 波妞又要眼神死了吧哈哈哈' },
+          { role: 'received', text: '買了五件 我先準備肉泥零食 等等回房見' },
+          { role: 'sent', text: '好啊 等等回去幫妳一起抓著牠' },
+          { role: 'received', text: '太好了一定超可愛' }
+        ]
       },
       ningning: {
         partner: 'imnotningning',
         avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8043.jpeg',
-        initial: '問妳上次海底撈那個潤喉糖是在哪網購的我也想買',
-        autoReplyUser: '不用買 我買超多吃不完 直接拿兩包給妳',
-        autoResponse: '太讚了 謝謝愛妳 省得我找老半天'
+        hasBlueBadge: true,
+        dialogues: [
+          { role: 'received', text: '問妳上次海底撈那個潤喉糖是在哪網購的我也想買' },
+          { role: 'sent', text: '不用買 我買超多吃不完 直接拿兩包給妳' },
+          { role: 'received', text: '太讚了 謝謝愛妳 省得我找老半天' },
+          { role: 'sent', text: '沒事 放在玄關那袋妳直接拿' },
+          { role: 'received', text: '收到 晚上去吃消夜嗎' }
+        ]
       },
       giselle: {
         partner: 'aerichandesu',
         avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png',
-        initial: '上次巡迴在街角吃的那家塔可餅真的好好吃 想起來又想吃了 下次休假一定要再去',
-        autoReplyUser: '好啊 那家醬汁超頂 下次排休第一站就去吃',
-        autoResponse: '約好了 為了塔可餅我要認真排假'
+        hasBlueBadge: true,
+        dialogues: [
+          { role: 'received', text: '上次巡迴在街角吃的那家塔可餅真的好好吃 想起來又想吃了 下次休假一定要再去' },
+          { role: 'sent', text: '好啊 那家醬汁超頂 下次排休第一站就去吃' },
+          { role: 'received', text: '約好了 為了塔可餅我要認真排假' },
+          { role: 'sent', text: '順便叫上大家一起去' },
+          { role: 'received', text: '沒問題 我先存地圖' }
+        ]
       }
     };
 
     let currentChatKey = '';
-    let hasChatReplied = false;
+    let chatStep = 0;
 
     function openChat(username, avatarSrc, scenarioKey) {
       currentChatKey = scenarioKey;
-      hasChatReplied = false;
+      chatStep = 0;
       const data = chatScenarios[scenarioKey];
-      document.getElementById('chatHeaderName').innerText = data.partner;
+      
+      const headerTitle = document.getElementById('chatHeaderName');
+      headerTitle.innerHTML = `
+        ${data.partner}
+        ${data.hasBlueBadge ? '<svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>' : ''}
+      `;
       document.getElementById('chatHeaderImg').src = data.avatar;
 
       const flow = document.getElementById('chatMessageFlow');
-      flow.innerHTML = `<div class="bubble received">${data.initial}</div>`;
+      flow.innerHTML = '';
+
+      // 渲染初始對話
+      if (data.dialogues.length > 0) {
+        renderBubble(data.dialogues[0]);
+        chatStep = 1;
+      }
 
       document.getElementById('chatInputText').value = '';
       document.getElementById('chatRoom').classList.add('active');
+    }
+
+    function renderBubble(item) {
+      const flow = document.getElementById('chatMessageFlow');
+      const bubble = document.createElement('div');
+      bubble.className = `bubble ${item.role}`;
+      bubble.innerHTML = item.text;
+      flow.appendChild(bubble);
+      flow.scrollTop = flow.scrollHeight;
     }
 
     function closeChat() {
       document.getElementById('chatRoom').classList.remove('active');
     }
 
-    // 點擊發送或輸入框時，系統自動發出指定隨興對話
-    function handleAutoChat() {
-      if (hasChatReplied) return;
+    // 發送訊息（真鍵盤輸入＋自動推展劇情）
+    function sendChatMessage() {
+      const input = document.getElementById('chatInputText');
+      const typedVal = input.value.trim();
+      input.value = '';
+
       const data = chatScenarios[currentChatKey];
       if (!data) return;
 
-      hasChatReplied = true;
-      const flow = document.getElementById('chatMessageFlow');
-      const input = document.getElementById('chatInputText');
-      input.value = '';
+      let sendText = typedVal;
+      // 若未打字，自動使用劇本台詞
+      if (!sendText && chatStep < data.dialogues.length && data.dialogues[chatStep].role === 'sent') {
+        sendText = data.dialogues[chatStep].text;
+      }
 
-      // 使用者自動送出
-      const sentBubble = document.createElement('div');
-      sentBubble.className = 'bubble sent';
-      sentBubble.innerText = data.autoReplyUser;
-      flow.appendChild(sentBubble);
-      flow.scrollTop = flow.scrollHeight;
+      if (!sendText) return;
 
-      // 對方隨後自然回覆
+      renderBubble({ role: 'sent', text: sendText });
+      chatStep++;
+
+      // 對方自動接續回覆
       setTimeout(() => {
-        const reply = document.createElement('div');
-        reply.className = 'bubble received';
-        reply.innerText = data.autoResponse;
-        flow.appendChild(reply);
-        flow.scrollTop = flow.scrollHeight;
+        if (chatStep < data.dialogues.length && data.dialogues[chatStep].role === 'received') {
+          renderBubble(data.dialogues[chatStep]);
+          chatStep++;
+        }
       }, 700);
+    }
+
+    // --- 定時推播通知排程 (5秒 & 1分鐘) ---
+    let pendingNotifAction = null;
+    function scheduleNotifications() {
+      // 1. 點進 IG 5 秒後：由 instagram 官方傳送
+      setTimeout(() => {
+        showInAppNotif({
+          avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_2050.jpeg',
+          title: 'instagram',
+          hasBlueBadge: true,
+          body: '若影片呈現「黑畫面」，請點擊影片區域或音量鍵兩次。仍無法解決請按右上角重整鍵。',
+          action: () => openChat('instagram', 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_2050.jpeg', 'instagram')
+        });
+      }, 5000);
+
+      // 2. 點進 IG 1 分鐘後 (60秒)：由 imwinter 傳送
+      setTimeout(() => {
+        showInAppNotif({
+          avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg',
+          title: 'imwinter',
+          hasBlueBadge: true,
+          body: '剛滑Reels看到好多可愛的狗勾衣服 忍不住買一堆 等等回房幫我一起讓波妞穿穿看',
+          action: () => openChat('imwinter', 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg', 'winter')
+        });
+      }, 60000);
+    }
+
+    function showInAppNotif(data) {
+      const notifEl = document.getElementById('inAppNotif');
+      document.getElementById('notifAvatar').src = data.avatar;
+      document.getElementById('notifTitle').innerHTML = `
+        ${data.title}
+        ${data.hasBlueBadge ? '<svg class="blue-verified-badge" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>' : ''}
+      `;
+      document.getElementById('notifBody').innerText = data.body;
+      pendingNotifAction = data.action;
+
+      notifEl.classList.add('show');
+      setTimeout(() => {
+        notifEl.classList.remove('show');
+      }, 5500);
+    }
+
+    function handleNotificationClick() {
+      document.getElementById('inAppNotif').classList.remove('show');
+      if (pendingNotifAction) pendingNotifAction();
     }
 
     initApp();
