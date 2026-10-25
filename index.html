@@ -274,7 +274,8 @@
     .feed-caption {
       padding: 0 14px 10px;
       font-size: 13px;
-      line-height: 1.4;
+      line-height: 1.45;
+      white-space: pre-line;
     }
     .feed-caption span.author-name {
       font-weight: 600;
@@ -451,7 +452,7 @@
     }
     .nav-user-avatar.active { border-color: #fff; }
 
-    /* 訊息收件匣 (英文標題) */
+    /* 訊息收件匣 */
     .dm-notes-tray {
       display: flex;
       gap: 14px;
@@ -502,7 +503,6 @@
     }
     .dm-snippet { font-size: 12px; color: var(--subtext); margin-top: 2px; }
 
-    /* 官方藍色勾勾樣式 */
     .blue-verified-badge {
       display: inline-flex;
       color: #0095f6 !important;
@@ -600,7 +600,7 @@
       cursor: pointer;
     }
 
-    /* 抽屜／Modal (英文標題) */
+    /* 抽屜／Modal */
     .sheet-modal {
       display: none;
       position: fixed;
@@ -832,7 +832,7 @@
 
         <div style="padding: 12px 14px; font-weight:700; font-size:16px;">Messages</div>
 
-        <!-- 0. instagram 官方帳號 (統一更換為 assets/logo/IMG_8341.jpeg) -->
+        <!-- 0. instagram 官方帳號 -->
         <div class="dm-cell" onclick="openChat('instagram', 'assets/logo/IMG_8341.jpeg', 'instagram')">
           <img class="dm-avatar" src="assets/logo/IMG_8341.jpeg" onerror="this.src='IMG_2050.jpeg'" />
           <div class="dm-details">
@@ -864,7 +864,7 @@
               imnotningning
               <svg class="blue-verified-badge" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
-            <div class="dm-snippet">問妳海底撈喉糖是在哪網購的我也想買 • 5小時</div>
+            <div class="dm-snippet">問妳上次海底撈那個潤喉糖是在哪網購的我也想買 • 5小時</div>
           </div>
         </div>
 
@@ -881,7 +881,7 @@
         </div>
       </section>
 
-      <!-- 4. 搜尋 / 探索頁面 (放大鏡 🔍：純影片九宮格，發文者統一為 aespa_official) -->
+      <!-- 4. 搜尋 / 探索頁面 (放大鏡 🔍：純影片九宮格，發文者統一為 aespa_official，特例除外) -->
       <section id="pageExplore" class="page">
         <div style="padding: 10px 14px;">
           <input type="text" placeholder="Search" style="width:100%; background:#262626; border:none; border-radius:8px; padding:8px 12px; color:#fff; font-size:14px; outline:none;" />
@@ -936,12 +936,12 @@
         <div class="photo-grid" id="profileGridList"></div>
       </section>
 
-      <!-- 6. 貼文串流頁面 (點擊縮圖精準對應滾動到該則貼文) -->
+      <!-- 6. 貼文串流頁面 (點擊縮圖精準對應滾動到該則貼文，主頁到底即停止不延伸) -->
       <section id="pagePostStream" class="page">
         <div class="posts-stream-top">
-          <span onclick="navTo('pageProfile')" style="font-size:22px; cursor:pointer;">←</span>
+          <span onclick="closePostStream()" style="font-size:22px; cursor:pointer;">←</span>
           <span style="font-weight:700; font-size:16px;">Posts</span>
-          <span onclick="navTo('pageProfile')" style="font-size:14px; color:var(--blue); cursor:pointer;">Done</span>
+          <span onclick="closePostStream()" style="font-size:14px; color:var(--blue); cursor:pointer;">Done</span>
         </div>
         <div id="streamFeedList"></div>
       </section>
@@ -1143,20 +1143,22 @@
       { id: 'bp9', type: 'image', src: 'IMG_4810.jpeg', caption: 'Winter tenderness ❄️💙', likes: 382, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' }
     ];
 
-    // 2. 個人主頁（九宮格）資料：原本照 + 3部原影片 + 15部指定新影片，發文者統一為 karina0411 (共27則)
+    // 2. 個人主頁（九宮格）專屬資料：9張照片 + 3部原影片 + 15部指定新影片，發文者統一為 karina0411 (共27則)
     const profileItems = [
       ...basePhotos,
-      { id: 'pr_v1', type: 'video', src: 'Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4', caption: 'Practice 💫', likes: 215, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v2', type: 'video', src: 'ScreenRecording_09-04-2026%2001-12-51_1.mov', caption: 'Behind moments 🎬', likes: 289, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v3', type: 'video', src: 'gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4', caption: 'Encore stage ✨', likes: 374, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      // 原有 3 部影片 (精確套用你指定的發文文案)
+      { id: 'pr_v1', type: 'video', src: 'Suila-Export-3DB39A89-4D02-4146-8B7E-72E3316B6D49.mp4', caption: 'asmr💫', likes: 215, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v2', type: 'video', src: 'assets/videos/karina_video_newyork_com.mp4', caption: '230701 New York', likes: 289, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v3', type: 'video', src: 'gmU-oZMKpxfSTCBqD9Y9V6XcwGEYk6pddXYxsYfVW3E.mp4', caption: 'sorry😗', likes: 374, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      // 新增 15 部影片 (依最新指令配置與專屬文案)
       { id: 'pr_v4', type: 'video', src: 'assets/videos/karina_video_blowflower.mp4', caption: 'Spring breeze 🌸', likes: 242, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
       { id: 'pr_v5', type: 'video', src: 'assets/videos/karina_video_bowl.mp4', caption: 'Cute props 🥣✨', likes: 218, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v6', type: 'video', src: 'assets/videos/karina_video_christmas.mp4', caption: 'Christmas time 🎄🎅', likes: 312, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v6', type: 'video', src: 'assets/videos/karina_video_best230701.mp4', caption: '首先，你盡全力了嗎？\n你正在盡全力嗎？\n只要盡了全力\n無論結果如何，所有過程都很精彩。\n為了沒有遺憾的結果\n努力奔跑直至最後吧', likes: 395, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
       { id: 'pr_v7', type: 'video', src: 'assets/videos/karina_video_daijobo.mp4', caption: 'Daijobo 💖✨', likes: 275, likeUser: 'imnotningning', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
       { id: 'pr_v8', type: 'video', src: 'assets/videos/karina_video_firstsnow.mp4', caption: 'First snow ❄️🤍', likes: 368, likeUser: 'pponyoim', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v9', type: 'video', src: 'assets/videos/karina_video_japan.mp4', caption: 'Tokyo street 🗼🖤', likes: 295, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v10', type: 'video', src: 'assets/videos/karina_video_illit.mp4', caption: 'Challenge with friends 💫', likes: 341, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
-      { id: 'pr_v11', type: 'video', src: 'assets/videos/karina_video_scarfvlog.mp4', caption: 'Scarf vlog 🧣❄️', likes: 289, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v9', type: 'video', src: 'assets/videos/karina_video_japan.mp4', caption: '🖤', likes: 295, likeUser: 'aespa_official', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v10', type: 'video', src: 'assets/videos/karina_video_illit.mp4', caption: 'with<3⭐️', likes: 341, likeUser: 'imwinter', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
+      { id: 'pr_v11', type: 'video', src: 'assets/videos/karina_video_scarfvlog.mp4', caption: '❄️', likes: 289, likeUser: 'katarinabluu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
       { id: 'pr_v12', type: 'video', src: 'assets/videos/karina_video_shoes.mp4', caption: 'OOTD 👟🖤', likes: 234, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
       { id: 'pr_v13', type: 'video', src: 'assets/videos/karina_video_snow_vlog.mp4', caption: 'Winter day vlog ☃️', likes: 351, likeUser: 'imnotningning', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
       { id: 'pr_v14', type: 'video', src: 'assets/videos/karina_video_twoofheart.mp4', caption: 'Two of heart 💕🫶', likes: 392, likeUser: 'pponyoim', author: 'karina0411', avatar: 'IMG_4810.jpeg' },
@@ -1166,7 +1168,7 @@
       { id: 'pr_v18', type: 'video', src: 'assets/videos/karina_video_tamagotchi.mp4', caption: 'Tamagotchi 👾🎮', likes: 245, likeUser: 'aerichandesu', author: 'karina0411', avatar: 'IMG_4810.jpeg' }
     ];
 
-    // 3. 搜尋/探索頁面（放大鏡 🔍）：純影片九宮格，發文者統一為 aespa_official，特例除外 (16部)
+    // 3. 搜尋/探索頁面（放大鏡 🔍）：完全移除照片，純影片九宮格，發文者統一為 aespa_official，特例除外 (18部)
     const exploreItems = [
       { id: 'ex_v1', src: 'assets/videos/karina_video_genie.mp4', caption: 'Genie challenge 🧞‍♀️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
       { id: 'ex_v2', src: 'assets/videos/karina_video_guilty.mp4', caption: 'Guilty 🖤', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
@@ -1175,15 +1177,17 @@
       { id: 'ex_v5', src: 'assets/videos/karina_video_chase.mp4', caption: 'Chase the rhythm 💫', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
       { id: 'ex_v6', src: 'assets/videos/karina_video_lemonade.mp4', caption: 'Lemonade 🍋', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
       { id: 'ex_v7', src: 'assets/videos/karina_video_lemontang.mp4', caption: 'Lemon vibes 🍹', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
-      { id: 'ex_v8', src: 'assets/videos/karina_video_beautifulchristmas.mp4', caption: 'Beautiful Christmas 🎄❤️', author: 'imwinter', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg' },
+      { id: 'ex_v8', src: 'assets/videos/karina_video_overdrive.mp4', caption: 'Overdrive ⚡', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
       { id: 'ex_v9', src: 'assets/videos/karina_video_snowdance.mp4', caption: 'Snow dance ❄️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
-      { id: 'ex_v10', src: 'assets/videos/karina_video_aegwoo.mp4', caption: 'Aegwoo moment 💙', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
-      { id: 'ex_v11', src: 'assets/videos/karinagiselle_video_channel.mp4', caption: 'Backstage hello 👭', author: 'aerichandesu', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png' },
-      { id: 'ex_v12', src: 'assets/videos/karina_video_everyday.mp4', caption: 'Everyday mood 🤍', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
-      { id: 'ex_v13', src: 'assets/videos/karina_video_serenade.mp4', caption: 'Serenade 🎶', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
-      { id: 'ex_v14', src: 'assets/videos/karina_video_taeyong.mp4', caption: 'Taeyong x Karina 🕺', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
-      { id: 'ex_v15', src: 'assets/videos/karina_video_tox.mp4', caption: 'Tox 🕶️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
-      { id: 'ex_v16', src: 'assets/videos/karinagiselle_video_dance.mp4', caption: 'Dance duo 👯‍♀️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' }
+      { id: 'ex_v10', src: 'assets/videos/karina_video_cold.mp4', caption: 'Cold winter vibe ❄️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v11', src: 'assets/videos/karina_video_everyday.mp4', caption: 'Everyday mood 🤍', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v12', src: 'assets/videos/karina_video_serenade.mp4', caption: 'Serenade 🎶', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v13', src: 'assets/videos/karina_video_tox.mp4', caption: 'Tox 🕶️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v14', src: 'assets/videos/karinagiselle_video_dance.mp4', caption: 'Dance duo 👯‍♀️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v15', src: 'assets/videos/karina_video_mountain.mp4', caption: 'Mountain scenery ⛰️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v16', src: 'assets/videos/karina_video_pricetag.mp4', caption: 'Price Tag 🏷️', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v17', src: 'assets/videos/karina_video_taeyong.mp4', caption: 'Taeyong x Karina 🕺', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' },
+      { id: 'ex_v18', src: 'assets/videos/karina_video_lesserafim.mp4', caption: 'Dance challenge with friends 💃', author: 'aespa_official', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_4675.jpeg' }
     ].map(item => ({
       ...item,
       type: 'video',
@@ -1194,7 +1198,7 @@
     // 4. 首頁動態（房屋 🏠）：保留原本照片，放入指定 4 部影片
     const homeVideos = [
       { id: 'hm_v1', src: 'assets/videos/karina_video_betterthings.mp4', author: 'katarinabluu', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_6344.jpeg', caption: 'Better Things 🫧✨', likes: 412000, likeUser: 'imwinter' },
-      { id: 'hm_v2', src: 'assets/videos/karina_video_illit.mp4', author: 'imwinter', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg', caption: 'Challenge with friends 💫', likes: 489000, likeUser: 'katarinabluu' },
+      { id: 'hm_v2', src: 'assets/videos/karina_video_mountain.mp4', author: 'imwinter', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg', caption: 'Mountain hike trip ⛰️', likes: 489000, likeUser: 'katarinabluu' },
       { id: 'hm_v3', src: 'assets/videos/karina_video_beautifulchristmas.mp4', author: 'imwinter', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_7077.jpeg', caption: 'Beautiful Christmas 🎄❤️', likes: 521000, likeUser: 'katarinabluu' },
       { id: 'hm_v4', src: 'assets/videos/karinagiselle_video_channel.mp4', author: 'aerichandesu', avatar: 'https://raw.githubusercontent.com/u11150003-arch/KARINA-iphone/main/IMG_8042.png', caption: 'Backstage hello 👭', likes: 478000, likeUser: 'pponyoim' }
     ].map(item => ({ ...item, type: 'video' }));
@@ -1203,13 +1207,14 @@
     const reelsItems = [
       { id: 'rl_1', file: 'karina_video_guilty.mp4', caption: 'Guilty 🖤', likes: 689000, comments: 4520 },
       { id: 'rl_2', file: 'karina_video_aegwoo.mp4', caption: 'Aegwoo moment 💙', likes: 598000, comments: 3980 },
-      { id: 'rl_3', file: 'karina_video_everyday.mp4', caption: 'Everyday mood 🤍', likes: 472000, comments: 2890 },
-      { id: 'rl_4', file: 'karina_video_cold.mp4', caption: 'Winter vibe ❄️', likes: 512000, comments: 3210 }
+      { id: 'rl_3', file: 'karina_video_christmas.mp4', caption: 'Christmas time 🎄🎅', likes: 541000, comments: 3410 },
+      { id: 'rl_4', file: 'karina_video_romance.mp4', caption: 'Romance filter 🩰✨', likes: 512000, comments: 3210 }
     ];
 
     let currentPlayingVideo = null;
     let videoObserver = null;
     let isGlobalSoundActive = false;
+    let currentStreamSource = 'profile'; // 'profile' 或 'explore'
 
     function pauseAllVideos() {
       document.querySelectorAll('video').forEach(v => {
@@ -1317,23 +1322,21 @@
 
     function initApp() {
       const grid = document.getElementById('profileGridList');
-      const stream = document.getElementById('streamFeedList');
       const homeFeed = document.getElementById('homeFeedList');
       const explore = document.getElementById('exploreGridList');
       const reelsContainer = document.getElementById('reelsContainer');
 
       grid.innerHTML = '';
-      stream.innerHTML = '';
       homeFeed.innerHTML = '';
       explore.innerHTML = '';
       reelsContainer.innerHTML = '';
 
-      // 1. 個人主頁
+      // --- 1. 個人主頁（九宮格）：27 篇貼文 ---
       document.getElementById('profilePostCount').innerText = profileItems.length;
       profileItems.forEach(post => {
         const cell = document.createElement('div');
         cell.className = 'grid-cell';
-        cell.onclick = () => openPostStreamAt('pr', post.id);
+        cell.onclick = () => openPostStreamFor('profile', post.id);
 
         if (post.type === 'video') {
           cell.innerHTML = `
@@ -1344,25 +1347,21 @@
           cell.innerHTML = `<img src="${post.src}" />`;
         }
         grid.appendChild(cell);
-
-        stream.insertAdjacentHTML('beforeend', buildPostCardHTML(post, 'pr'));
       });
 
-      // 2. 探索
+      // --- 2. 搜尋 / 探索頁面 (放大鏡 🔍：18部純影片九宮格) ---
       exploreItems.forEach(item => {
         const cell = document.createElement('div');
         cell.className = 'grid-cell';
-        cell.onclick = () => openPostStreamAt('ex', item.id);
+        cell.onclick = () => openPostStreamFor('explore', item.id);
         cell.innerHTML = `
           <svg class="video-corner-badge" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           <video src="${item.src}#t=0.001" preload="auto" muted playsinline></video>
         `;
         explore.appendChild(cell);
-
-        stream.insertAdjacentHTML('beforeend', buildPostCardHTML(item, 'ex'));
       });
 
-      // 3. 首頁
+      // --- 3. 首頁動態 (房屋 🏠：保留原本照片，放入指定 4 部影片) ---
       const combinedHome = [...basePhotos];
       homeVideos.forEach((hv, i) => {
         combinedHome.splice((i * 2) + 1, 0, hv);
@@ -1371,7 +1370,7 @@
         homeFeed.insertAdjacentHTML('beforeend', buildPostCardHTML(item, 'hm'));
       });
 
-      // 4. Reels
+      // --- 4. 連續短片區 (Reels ▷：指定 4 部) ---
       reelsItems.forEach(r => {
         const reelHTML = `
           <div class="reel-block" onclick="handleVideoTap(document.getElementById('reel_v_${r.id}'), 'badge_r_${r.id}', 'btn_sound_r_${r.id}')">
@@ -1404,6 +1403,7 @@
       scheduleNotifications();
     }
 
+    // 只有 1 部在正中央的影片能播放
     function setupVideoAutoPlayObserver() {
       if (videoObserver) videoObserver.disconnect();
       videoObserver = new IntersectionObserver((entries) => {
@@ -1430,7 +1430,7 @@
       if (isUnmuted) {
         containerEl.innerHTML = `<svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>`;
       } else {
-        containerEl.innerHTML = `<svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`;
+        containerEl.innerHTML = `<svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>`;
       }
     }
 
@@ -1454,7 +1454,7 @@
         videoEl.muted = true;
         updateSpeakerIcon(btn, false);
         if (badge) {
-          badge.innerHTML = `<svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`;
+          badge.innerHTML = `<svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77z"/></svg>`;
           badge.classList.add('visible');
           setTimeout(() => badge.classList.remove('visible'), 600);
         }
@@ -1492,14 +1492,16 @@
 
         if (Math.abs(deltaY) < 60) {
           if (deltaX > 70) {
+            // 向右滑返回
             if (document.getElementById('pagePostStream').classList.contains('active')) {
-              navTo('pageProfile');
+              closePostStream();
             } else if (document.getElementById('chatRoom').classList.contains('active')) {
               closeChat();
             } else if (document.getElementById('pageMessages').classList.contains('active')) {
               navTo('pageFeed');
             }
           } else if (deltaX < -70) {
+            // 向左滑
             if (document.getElementById('pageFeed').classList.contains('active')) {
               navTo('pageMessages');
             }
@@ -1539,9 +1541,25 @@
       }
     }
 
-    function openPostStreamAt(prefix, postId) {
+    // 核心修正：動態切換串流資料集（個人主頁到底即停止，不延伸探索內容）
+    function openPostStreamFor(source, postId) {
+      currentStreamSource = source;
       pauseAllVideos();
+      
+      const streamContainer = document.getElementById('streamFeedList');
+      streamContainer.innerHTML = '';
+      
+      const prefix = source === 'profile' ? 'pr' : 'ex';
+      const items = source === 'profile' ? profileItems : exploreItems;
+      
+      // 僅渲染該來源的清單，滑完即停
+      items.forEach(item => {
+        streamContainer.insertAdjacentHTML('beforeend', buildPostCardHTML(item, prefix));
+      });
+
+      setupVideoAutoPlayObserver();
       navTo('pagePostStream');
+
       setTimeout(() => {
         const targetCard = document.getElementById(`card_${prefix}_${postId}`);
         if (targetCard) {
@@ -1552,6 +1570,14 @@
           }
         }
       }, 60);
+    }
+
+    function closePostStream() {
+      if (currentStreamSource === 'profile') {
+        navTo('pageProfile');
+      } else {
+        navTo('pageExplore');
+      }
     }
 
     function toggleHeart(uniqueId, baseLikes, user, author) {
@@ -1573,7 +1599,7 @@
         if (author === 'karina0411') {
           text.innerText = `Liked by ${user} and ${baseLikes} others`;
         } else {
-          text.innerText = `Liked by ${user} and ${(baseLikes/10000).toFixed(1)}M others`;
+          text.innerText = `${user} and ${(baseLikes/10000).toFixed(1)}M others`;
         }
       }
     }
@@ -1700,7 +1726,6 @@
           { role: 'received', text: '買了五件 我先準備肉泥零食 等等回房見' },
           { role: 'sent', text: '好啊 等等回去幫妳一起抓著牠' },
           { role: 'received', text: '太好了一定超可愛' },
-          // 冬回完後，Karina 同時回傳兩張照片 + …🥺
           { 
             role: 'sent-photos', 
             photos: [
@@ -1760,12 +1785,10 @@
         chatStep = 1;
       }
 
-      // 自動帶出第一句預設文字
       prepareDefaultInput();
       document.getElementById('chatRoom').classList.add('active');
     }
 
-    // 點擊訊息欄自動帶出準備回覆的預設文字
     function prepareDefaultInput() {
       const data = chatScenarios[currentChatKey];
       const input = document.getElementById('chatInputText');
@@ -1779,7 +1802,6 @@
     function renderBubble(item) {
       const flow = document.getElementById('chatMessageFlow');
 
-      // 如果包含雙照片 (如波妞照)
       if (item.role === 'sent-photos') {
         const photoGrid = document.createElement('div');
         photoGrid.className = 'bubble-photo-grid';
@@ -1819,22 +1841,18 @@
       if (chatStep < data.dialogues.length) {
         const nextItem = data.dialogues[chatStep];
         if (nextItem.role === 'sent' || nextItem.role === 'sent-photos') {
-          // 如果有打字則覆蓋，無打字則送出劇本
           if (typedVal && nextItem.role === 'sent') {
             nextItem.text = typedVal;
           }
           renderBubble(nextItem);
           chatStep++;
 
-          // 對方接續回覆
           setTimeout(() => {
             if (chatStep < data.dialogues.length && data.dialogues[chatStep].role === 'received') {
               renderBubble(data.dialogues[chatStep]);
               chatStep++;
-              // 準備下一輪預設輸入
               prepareDefaultInput();
 
-              // 如果冬回完「太好了一定超可愛」，自動觸發 Karina 回傳波妞雙照片與…🥺
               if (currentChatKey === 'winter' && chatStep < data.dialogues.length && data.dialogues[chatStep].role === 'sent-photos') {
                 setTimeout(() => {
                   renderBubble(data.dialogues[chatStep]);
@@ -1851,7 +1869,7 @@
     // --- 定時推播通知排程 (5秒 & 1分鐘) ---
     let pendingNotifAction = null;
     function scheduleNotifications() {
-      // 1. 點進 IG 5 秒後：由 instagram 官方傳送 (使用 assets/logo/IMG_8341.jpeg)
+      // 1. 點進 IG 5 秒後：由 instagram 官方傳送
       setTimeout(() => {
         showInAppNotif({
           avatar: 'assets/logo/IMG_8341.jpeg',
